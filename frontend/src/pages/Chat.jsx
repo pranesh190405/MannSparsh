@@ -89,24 +89,24 @@ const Chat = () => {
     ];
 
     return (
-        <Container maxWidth="md" sx={{ height: 'calc(100vh - 100px)', display: 'flex', flexDirection: 'column', py: 2 }}>
+        <Container maxWidth="md" sx={{ height: { xs: 'calc(100vh - 80px)', sm: 'calc(100vh - 100px)' }, display: 'flex', flexDirection: 'column', py: { xs: 1, sm: 2 } }}>
             {/* Header */}
             <Box sx={{
-                display: 'flex', alignItems: 'center', gap: 2, mb: 2,
+                display: 'flex', alignItems: 'center', gap: { xs: 1.5, sm: 2 }, mb: 2,
                 pb: 2, borderBottom: '1px solid #e2e8f0'
             }}>
                 <Avatar sx={{
                     bgcolor: '#6366f1',
                     background: 'linear-gradient(135deg, #6366f1 0%, #ec4899 100%)',
-                    width: 48, height: 48
+                    width: { xs: 40, sm: 48 }, height: { xs: 40, sm: 48 }
                 }}>
                     <SmartToy />
                 </Avatar>
                 <Box>
-                    <Typography variant="h5" fontWeight="bold">
-                        CampusCare AI
+                    <Typography sx={{ fontSize: { xs: '1.1rem', sm: '1.5rem' }, fontWeight: 'bold' }}>
+                        MannSparsh AI
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography sx={{ fontSize: { xs: '0.7rem', sm: '0.875rem' }, color: 'text.secondary', display: { xs: 'none', sm: 'block' } }}>
                         Your compassionate mental health companion • Always here for you
                     </Typography>
                 </Box>
@@ -267,7 +267,7 @@ const Chat = () => {
                             ))}
                         </Box>
                         <Typography variant="caption" color="text.secondary">
-                            CampusCare AI is thinking...
+                            MannSparsh AI is thinking...
                         </Typography>
                     </Box>
                 )}

@@ -1,4 +1,4 @@
-# CAMPUSCARE - Digital Mental Health Platform
+# MANNSPARSH - Digital Mental Health Platform
 
 A comprehensive mental health support system for university students, featuring AI support, gamified screening, video counselling, and peer forums.
 

@@ -59,9 +59,9 @@ const Register = () => {
                 background: 'rgba(255,255,255,0.04)'
             }} />
 
-            <Container maxWidth="md" sx={{ display: 'flex', alignItems: 'center', py: 4 }}>
+            <Container maxWidth="md" sx={{ display: 'flex', alignItems: 'center', py: { xs: 2, sm: 4 } }}>
                 <Paper elevation={6} sx={{
-                    p: 5, width: '100%', borderRadius: 4,
+                    p: { xs: 3, sm: 5 }, width: '100%', borderRadius: { xs: 3, sm: 4 },
                     background: 'rgba(255,255,255,0.95)',
                     backdropFilter: 'blur(20px)'
                 }}>
@@ -75,7 +75,7 @@ const Register = () => {
                             <School sx={{ fontSize: 36, color: 'white' }} />
                         </Box>
                         <Typography variant="h4" fontWeight="bold" color="primary">
-                            Join CampusCare
+                            Join MannSparsh
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                             Create your account and start your wellness journey

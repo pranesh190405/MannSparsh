@@ -61,7 +61,7 @@ app.use('/api/counsellor-forum', require('./routes/counsellorForum'));
 const PORT = process.env.PORT || 5000;
 
 // Database Connection
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/campuscare')
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/mannsparsh')
     .then(() => {
         console.log('MongoDB Connected');
         server.listen(PORT, () => {

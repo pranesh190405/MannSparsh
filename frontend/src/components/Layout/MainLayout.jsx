@@ -60,10 +60,10 @@ const MainLayout = () => {
             }}>
                 <Psychology sx={{ fontSize: 40, color: 'white', mb: 0.5 }} />
                 <Typography variant="h6" fontWeight="bold" color="white">
-                    CampusCare
+                    MannSparsh
                 </Typography>
                 <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-                    Mental Health Platform
+                    Digital Mental Health Platform
                 </Typography>
             </Box>
 

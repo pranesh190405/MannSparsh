@@ -56,9 +56,9 @@ const Login = () => {
                 background: 'rgba(255,255,255,0.04)'
             }} />
 
-            <Container maxWidth="sm" sx={{ display: 'flex', alignItems: 'center', py: 4 }}>
+            <Container maxWidth="sm" sx={{ display: 'flex', alignItems: 'center', py: { xs: 2, sm: 4 } }}>
                 <Paper elevation={6} sx={{
-                    p: 5, width: '100%', borderRadius: 4,
+                    p: { xs: 3, sm: 5 }, width: '100%', borderRadius: { xs: 3, sm: 4 },
                     background: 'rgba(255,255,255,0.95)',
                     backdropFilter: 'blur(20px)'
                 }}>
@@ -72,7 +72,7 @@ const Login = () => {
                             <Psychology sx={{ fontSize: 36, color: 'white' }} />
                         </Box>
                         <Typography variant="h4" fontWeight="bold" color="primary">
-                            CampusCare
+                            MannSparsh
                         </Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                             Your Campus Mental Health Companion

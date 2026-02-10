@@ -65,11 +65,11 @@ const Appointments = () => {
     };
 
     return (
-        <Container maxWidth="lg" sx={{ mt: 2, mb: 4 }}>
+        <Container maxWidth="lg" sx={{ mt: { xs: 1, sm: 2 }, mb: 4, px: { xs: 1, sm: 3 } }}>
             {/* Header */}
             <Box sx={{
                 background: 'linear-gradient(135deg, #10b981 0%, #34d399 100%)',
-                borderRadius: 4, p: 4, mb: 4, color: 'white',
+                borderRadius: { xs: 3, md: 4 }, p: { xs: 2.5, sm: 3, md: 4 }, mb: { xs: 3, md: 4 }, color: 'white',
                 position: 'relative', overflow: 'hidden'
             }}>
                 <Box sx={{

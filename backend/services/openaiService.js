@@ -5,7 +5,7 @@ const openai = new OpenAI({
 });
 
 const SYSTEM_PROMPT = `
-You are CampusCare AI, a compassionate and supportive mental health first-aid assistant specifically designed for university students.
+You are MannSparsh AI, a compassionate and supportive mental health first-aid assistant specifically designed for university students.
 
 Your core responsibilities:
 1. Listen with empathy and validate their feelings

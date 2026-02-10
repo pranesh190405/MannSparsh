@@ -94,23 +94,24 @@ const Dashboard = () => {
             {/* Hero Welcome Section */}
             <Box sx={{
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                borderRadius: 4, p: 4, mb: 4, color: 'white',
+                borderRadius: { xs: 3, md: 4 }, p: { xs: 2.5, sm: 3, md: 4 }, mb: { xs: 3, md: 4 }, color: 'white',
                 position: 'relative', overflow: 'hidden'
             }}>
                 <Box sx={{
                     position: 'absolute', top: -50, right: -50,
-                    width: 200, height: 200, borderRadius: '50%',
+                    width: { xs: 120, md: 200 }, height: { xs: 120, md: 200 }, borderRadius: '50%',
                     background: 'rgba(255,255,255,0.1)'
                 }} />
                 <Box sx={{
                     position: 'absolute', bottom: -30, left: '50%',
                     width: 150, height: 150, borderRadius: '50%',
-                    background: 'rgba(255,255,255,0.05)'
+                    background: 'rgba(255,255,255,0.05)',
+                    display: { xs: 'none', sm: 'block' }
                 }} />
-                <Typography variant="h3" fontWeight="bold" gutterBottom>
+                <Typography sx={{ fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' }, fontWeight: 'bold' }} gutterBottom>
                     Welcome back, {user?.name?.split(' ')[0]}! 👋
                 </Typography>
-                <Typography variant="h6" sx={{ opacity: 0.9, mb: 2 }}>
+                <Typography sx={{ fontSize: { xs: '0.9rem', sm: '1rem', md: '1.25rem' }, opacity: 0.9, mb: 2 }}>
                     How are you feeling today? We're here to help you thrive.
                 </Typography>
                 {isCounsellor && (
