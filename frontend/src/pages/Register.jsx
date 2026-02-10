@@ -3,16 +3,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import {
-    Container,
-    Box,
-    Typography,
-    TextField,
-    Button,
-    Alert,
-    Paper,
-    Grid,
-    MenuItem
+    Container, Box, Typography, TextField, Button, Alert,
+    Paper, Grid, MenuItem, Divider, Stepper, Step, StepLabel
 } from '@mui/material';
+import { Psychology, School } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
@@ -22,14 +16,8 @@ const Register = () => {
 
     const formik = useFormik({
         initialValues: {
-            universityId: '',
-            name: '',
-            email: '',
-            password: '',
-            confirmPassword: '',
-            department: '',
-            year: '',
-            role: 'student' // Default role
+            universityId: '', name: '', email: '', password: '',
+            confirmPassword: '', department: '', year: '', role: 'student'
         },
         validationSchema: Yup.object({
             universityId: Yup.string().required('Required'),
@@ -45,48 +33,63 @@ const Register = () => {
         onSubmit: async (values) => {
             try {
                 setError('');
-                // Remove confirmPassword from values sent to API
                 const { confirmPassword, ...userData } = values;
                 await register(userData);
                 navigate('/');
             } catch (err) {
-                console.error('Registration failed:', err.response); // Debug log
                 setError(err.response?.data?.message || 'Failed to register');
             }
         },
     });
 
     return (
-        <Container component="main" maxWidth="md">
-            <Box
-                sx={{
-                    marginTop: 8,
-                    marginBottom: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
-                <Paper elevation={3} sx={{ p: 4, width: '100%', borderRadius: 4 }}>
-                    <Typography component="h1" variant="h4" align="center" gutterBottom color="primary">
-                        Join CampusCare
-                    </Typography>
-                    <Typography component="h2" variant="h6" align="center" gutterBottom color="textSecondary">
-                        Create your account
-                    </Typography>
+        <Box sx={{
+            minHeight: '100vh', display: 'flex',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            position: 'relative', overflow: 'hidden'
+        }}>
+            <Box sx={{
+                position: 'absolute', top: -120, right: -120,
+                width: 400, height: 400, borderRadius: '50%',
+                background: 'rgba(255,255,255,0.06)'
+            }} />
+            <Box sx={{
+                position: 'absolute', bottom: -80, left: -80,
+                width: 300, height: 300, borderRadius: '50%',
+                background: 'rgba(255,255,255,0.04)'
+            }} />
 
-                    {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+            <Container maxWidth="md" sx={{ display: 'flex', alignItems: 'center', py: 4 }}>
+                <Paper elevation={6} sx={{
+                    p: 5, width: '100%', borderRadius: 4,
+                    background: 'rgba(255,255,255,0.95)',
+                    backdropFilter: 'blur(20px)'
+                }}>
+                    {/* Logo */}
+                    <Box textAlign="center" mb={3}>
+                        <Box sx={{
+                            width: 64, height: 64, borderRadius: 3, mx: 'auto', mb: 2,
+                            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center'
+                        }}>
+                            <School sx={{ fontSize: 36, color: 'white' }} />
+                        </Box>
+                        <Typography variant="h4" fontWeight="bold" color="primary">
+                            Join CampusCare
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Create your account and start your wellness journey
+                        </Typography>
+                    </Box>
 
-                    <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ mt: 3 }}>
+                    {error && <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>{error}</Alert>}
+
+                    <Box component="form" onSubmit={formik.handleSubmit} noValidate>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    name="name"
-                                    required
-                                    fullWidth
-                                    id="name"
-                                    label="Full Name"
-                                    autoFocus
+                                    name="name" required fullWidth id="name"
+                                    label="Full Name" autoFocus
                                     value={formik.values.name}
                                     onChange={formik.handleChange}
                                     error={formik.touched.name && Boolean(formik.errors.name)}
@@ -95,11 +98,8 @@ const Register = () => {
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    required
-                                    fullWidth
-                                    id="universityId"
-                                    label="University ID / Roll No"
-                                    name="universityId"
+                                    required fullWidth id="universityId"
+                                    label="University ID / Roll No" name="universityId"
                                     value={formik.values.universityId}
                                     onChange={formik.handleChange}
                                     error={formik.touched.universityId && Boolean(formik.errors.universityId)}
@@ -108,12 +108,8 @@ const Register = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
-                                    required
-                                    fullWidth
-                                    id="email"
-                                    label="University Email"
-                                    name="email"
-                                    autoComplete="email"
+                                    required fullWidth id="email" label="University Email"
+                                    name="email" autoComplete="email"
                                     value={formik.values.email}
                                     onChange={formik.handleChange}
                                     error={formik.touched.email && Boolean(formik.errors.email)}
@@ -122,13 +118,8 @@ const Register = () => {
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    required
-                                    fullWidth
-                                    name="password"
-                                    label="Password"
-                                    type="password"
-                                    id="password"
-                                    autoComplete="new-password"
+                                    required fullWidth name="password" label="Password"
+                                    type="password" id="password" autoComplete="new-password"
                                     value={formik.values.password}
                                     onChange={formik.handleChange}
                                     error={formik.touched.password && Boolean(formik.errors.password)}
@@ -137,12 +128,8 @@ const Register = () => {
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    required
-                                    fullWidth
-                                    name="confirmPassword"
-                                    label="Confirm Password"
-                                    type="password"
-                                    id="confirmPassword"
+                                    required fullWidth name="confirmPassword"
+                                    label="Confirm Password" type="password" id="confirmPassword"
                                     value={formik.values.confirmPassword}
                                     onChange={formik.handleChange}
                                     error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
@@ -151,32 +138,26 @@ const Register = () => {
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    required
-                                    fullWidth
-                                    name="department"
-                                    label="Department"
-                                    select
-                                    id="department"
+                                    required fullWidth name="department" label="Department"
+                                    select id="department"
                                     value={formik.values.department}
                                     onChange={formik.handleChange}
                                     error={formik.touched.department && Boolean(formik.errors.department)}
                                     helperText={formik.touched.department && formik.errors.department}
                                 >
-                                    <MenuItem value="CSE">CSE</MenuItem>
-                                    <MenuItem value="ECE">ECE</MenuItem>
-                                    <MenuItem value="MECH">MECH</MenuItem>
-                                    <MenuItem value="CIVIL">CIVIL</MenuItem>
+                                    <MenuItem value="CSE">Computer Science</MenuItem>
+                                    <MenuItem value="ECE">Electronics</MenuItem>
+                                    <MenuItem value="MECH">Mechanical</MenuItem>
+                                    <MenuItem value="CIVIL">Civil</MenuItem>
+                                    <MenuItem value="EEE">Electrical</MenuItem>
+                                    <MenuItem value="IT">Information Technology</MenuItem>
                                     <MenuItem value="OTHER">Other</MenuItem>
                                 </TextField>
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    required
-                                    fullWidth
-                                    name="year"
-                                    label="Year of Study"
-                                    select
-                                    id="year"
+                                    required fullWidth name="year" label="Year of Study"
+                                    select id="year"
                                     value={formik.values.year}
                                     onChange={formik.handleChange}
                                     error={formik.touched.year && Boolean(formik.errors.year)}
@@ -186,28 +167,50 @@ const Register = () => {
                                     <MenuItem value="2">2nd Year</MenuItem>
                                     <MenuItem value="3">3rd Year</MenuItem>
                                     <MenuItem value="4">4th Year</MenuItem>
+                                    <MenuItem value="5">5th Year (Integrated)</MenuItem>
                                 </TextField>
                             </Grid>
                         </Grid>
+
                         <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2, py: 1.5 }}
+                            type="submit" fullWidth variant="contained" size="large"
+                            sx={{
+                                mt: 3, mb: 2, py: 1.5,
+                                background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                                fontSize: '1rem', fontWeight: 600,
+                                '&:hover': {
+                                    background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+                                    transform: 'translateY(-1px)',
+                                    boxShadow: '0 8px 25px rgba(99, 102, 241, 0.3)'
+                                },
+                                transition: 'all 0.3s'
+                            }}
                         >
-                            Sign Up
+                            Create Account
                         </Button>
-                        <Grid container justifyContent="center">
-                            <Grid item>
-                                <Link to="/login" style={{ textDecoration: 'none', color: '#4361ee' }}>
-                                    Already have an account? Sign in
+
+                        <Box textAlign="center">
+                            <Link to="/login" style={{ textDecoration: 'none', color: '#6366f1', fontWeight: 500 }}>
+                                Already have an account? Sign in
+                            </Link>
+                        </Box>
+
+                        <Divider sx={{ my: 2 }}>
+                            <Typography variant="body2" color="text.secondary">OR</Typography>
+                        </Divider>
+
+                        <Box textAlign="center">
+                            <Typography variant="body2" color="text.secondary">
+                                Are you a counsellor?{' '}
+                                <Link to="/counsellor/register" style={{ textDecoration: 'none', color: '#ec4899', fontWeight: 600 }}>
+                                    Register as Counsellor
                                 </Link>
-                            </Grid>
-                        </Grid>
+                            </Typography>
+                        </Box>
                     </Box>
                 </Paper>
-            </Box>
-        </Container>
+            </Container>
+        </Box>
     );
 };
 
