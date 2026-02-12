@@ -14,7 +14,6 @@ import Screening from './pages/Screening';
 import Appointments from './pages/Appointments';
 import VideoRoom from './components/Video/VideoRoom';
 import Forum from './pages/Forum';
-import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   return (
@@ -33,7 +32,6 @@ function App() {
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/forum" element={<Forum />} />
-          <Route path="/admin" element={<AdminDashboard />} />
         </Route>
         <Route path="/video/:roomId" element={<VideoRoom />} />
       </Route>

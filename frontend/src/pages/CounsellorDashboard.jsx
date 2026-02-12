@@ -51,21 +51,7 @@ const CounsellorDashboard = () => {
         }
     };
 
-    if (!user?.isApproved) {
-        return (
-            <Container maxWidth="md" sx={{ mt: 8 }}>
-                <Alert severity="warning">
-                    <Typography variant="h6" gutterBottom>
-                        Account Pending Approval
-                    </Typography>
-                    <Typography variant="body2">
-                        Your counsellor account is currently under review by our administrators.
-                        You will receive an email once your account is approved. Thank you for your patience!
-                    </Typography>
-                </Alert>
-            </Container>
-        );
-    }
+
 
     const statCards = [
         {

@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         // Check for stored token
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         if (token) {
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             fetchUser();
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
             setUser(res.data);
         } catch (error) {
             console.error('Error fetching user', error);
-            localStorage.removeItem('token');
+            sessionStorage.removeItem('token');
             delete axios.defaults.headers.common['Authorization'];
         } finally {
             setLoading(false);
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         const res = await axios.post('/api/auth/login', { email, password });
-        localStorage.setItem('token', res.data.token);
+        sessionStorage.setItem('token', res.data.token);
         axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
         setUser(res.data.user);
         // Explicitly fetch full user details if needed, or just use what login returned
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (userData) => {
         const res = await axios.post('/api/auth/register', userData);
-        localStorage.setItem('token', res.data.token);
+        sessionStorage.setItem('token', res.data.token);
         axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
         setUser(res.data.user);
         await fetchUser();
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
-        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
         delete axios.defaults.headers.common['Authorization'];
         setUser(null);
     };

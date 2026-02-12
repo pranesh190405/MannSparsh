@@ -41,7 +41,6 @@ router.post('/register', async (req, res) => {
             userData.specialization = specialization;
             userData.bio = bio || '';
             userData.credentials = credentials;
-            userData.isApproved = false; // Counsellors need approval
         }
 
         user = new User(userData);
@@ -66,8 +65,7 @@ router.post('/register', async (req, res) => {
                     user: {
                         id: user.id,
                         name: user.name,
-                        role: user.role,
-                        isApproved: user.isApproved
+                        role: user.role
                     }
                 });
             }

@@ -225,8 +225,8 @@ const CounsellorRegister = () => {
                                     </Typography>
                                 </Box>
 
-                                <Alert severity="info" sx={{ mt: 2 }}>
-                                    Your account will be reviewed by administrators before approval.
+                                <Alert severity="success" sx={{ mt: 2 }}>
+                                    Your account will be ready to use immediately after registration.
                                 </Alert>
                             </Form>
                         )}

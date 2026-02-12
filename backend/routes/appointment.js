@@ -8,11 +8,10 @@ const User = require('../models/User');
 // Get Available Slots
 router.get('/slots', auth, async (req, res) => {
     try {
-        // Return all unbooked slots in the future
         const slots = await CounsellorSlot.find({
             isBooked: false,
             date: { $gte: new Date() }
-        }).populate('counsellorId', 'name department');
+        }).populate('counsellorId', 'name department specialization');
         res.json(slots);
     } catch (err) {
         console.error(err.message);
@@ -21,9 +20,8 @@ router.get('/slots', auth, async (req, res) => {
 });
 
 // Create Slot (Counsellor only)
-// TODO: Add role check middleware or check role in handler
 router.post('/slots', auth, async (req, res) => {
-    if (req.user.user.role !== 'counsellor' && req.user.user.role !== 'admin') {
+    if (req.user.user.role !== 'counsellor') {
         return res.status(403).json({ message: 'Not authorized' });
     }
 
@@ -56,23 +54,77 @@ router.post('/book', auth, async (req, res) => {
             return res.status(400).json({ message: 'Slot already booked' });
         }
 
-        // Create Appointment
-        // Combine date and startTime to get slotTime approximation or just use date
         const appointment = new Appointment({
             studentId: req.user.user.id,
             counsellorId: slot.counsellorId,
-            slotTime: slot.date, // Simplification, strictly should combine date + time
+            slotTime: slot.date,
             notes,
             status: 'pending'
         });
 
         await appointment.save();
 
-        // Mark slot as booked
         slot.isBooked = true;
         await slot.save();
 
         res.json(appointment);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
+
+// Emergency Meeting Request (Student)
+router.post('/emergency', auth, async (req, res) => {
+    try {
+        const { notes } = req.body;
+
+        // Find any available counsellor
+        const counsellors = await User.find({ role: 'counsellor' }).select('_id');
+
+        if (counsellors.length === 0) {
+            return res.status(404).json({ message: 'No counsellors available' });
+        }
+
+        // Create emergency appointment — not assigned to a specific counsellor yet
+        const appointment = new Appointment({
+            studentId: req.user.user.id,
+            counsellorId: counsellors[0]._id, // Placeholder, any counsellor can accept
+            slotTime: new Date(),
+            notes: notes || 'Emergency meeting requested',
+            status: 'pending',
+            isEmergency: true
+        });
+
+        await appointment.save();
+
+        const populated = await Appointment.findById(appointment._id)
+            .populate('studentId', 'name email')
+            .populate('counsellorId', 'name department');
+
+        res.json(populated);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
+
+// Get Emergency Requests (for counsellors)
+router.get('/emergency-requests', auth, async (req, res) => {
+    try {
+        if (req.user.user.role !== 'counsellor') {
+            return res.status(403).json({ message: 'Not authorized' });
+        }
+
+        const emergencies = await Appointment.find({
+            isEmergency: true,
+            status: 'pending'
+        })
+            .populate('studentId', 'name email department year')
+            .populate('counsellorId', 'name')
+            .sort({ createdAt: -1 });
+
+        res.json(emergencies);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');
@@ -91,8 +143,8 @@ router.get('/my-appointments', auth, async (req, res) => {
 
         const appointments = await Appointment.find(query)
             .populate('studentId', 'name email')
-            .populate('counsellorId', 'name department')
-            .sort({ slotTime: 1 });
+            .populate('counsellorId', 'name department specialization')
+            .sort({ createdAt: -1 });
 
         res.json(appointments);
     } catch (err) {
@@ -104,22 +156,35 @@ router.get('/my-appointments', auth, async (req, res) => {
 // Approve Appointment (Counsellor)
 router.post('/approve/:id', auth, async (req, res) => {
     try {
+        if (req.user.user.role !== 'counsellor') {
+            return res.status(403).json({ message: 'Not authorized' });
+        }
+
         const appointment = await Appointment.findById(req.params.id);
         if (!appointment) {
             return res.status(404).json({ message: 'Appointment not found' });
         }
 
-        // Check if user is the assigned counsellor
-        if (appointment.counsellorId.toString() !== req.user.user.id && req.user.user.role !== 'admin') {
+        // For emergency meetings, any counsellor can accept
+        // For regular meetings, only the assigned counsellor
+        if (!appointment.isEmergency && appointment.counsellorId.toString() !== req.user.user.id) {
             return res.status(403).json({ message: 'Not authorized' });
         }
 
+        // If emergency, assign this counsellor
+        if (appointment.isEmergency) {
+            appointment.counsellorId = req.user.user.id;
+        }
+
         appointment.status = 'approved';
-        // Generate Meeting ID
         appointment.meetingId = `meet_${appointment.id}_${Date.now()}`;
         await appointment.save();
 
-        res.json(appointment);
+        const populated = await Appointment.findById(appointment._id)
+            .populate('studentId', 'name email')
+            .populate('counsellorId', 'name department');
+
+        res.json(populated);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');

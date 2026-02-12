@@ -20,31 +20,49 @@ const io = new Server(server, {
     }
 });
 
+// Map userId -> socketId for WebRTC signaling
+const userSocketMap = {};
+
 io.on('connection', (socket) => {
-    console.log('A user connected:', socket.id);
+    console.log('Socket connected:', socket.id);
 
     socket.on('join-room', (roomId, userId) => {
-        console.log(`User ${userId} joined room ${roomId}`);
+        console.log(`User ${userId} (socket ${socket.id}) joined room ${roomId}`);
         socket.join(roomId);
+        userSocketMap[userId] = socket.id;
+        socket.userId = userId;
+        socket.roomId = roomId;
+
+        // Tell everyone else in the room that this user joined
         socket.to(roomId).emit('user-connected', userId);
 
         socket.on('disconnect', () => {
-            console.log('User disconnected:', socket.id);
+            console.log(`User ${userId} disconnected`);
             socket.to(roomId).emit('user-disconnected', userId);
+            delete userSocketMap[userId];
         });
     });
 
-    // WebRTC Signaling
+    // WebRTC Signaling — route by socketId lookup
     socket.on('offer', (payload) => {
-        io.to(payload.target).emit('offer', payload);
+        const targetSocketId = userSocketMap[payload.target];
+        if (targetSocketId) {
+            io.to(targetSocketId).emit('offer', payload);
+        }
     });
 
     socket.on('answer', (payload) => {
-        io.to(payload.target).emit('answer', payload);
+        const targetSocketId = userSocketMap[payload.target];
+        if (targetSocketId) {
+            io.to(targetSocketId).emit('answer', payload);
+        }
     });
 
     socket.on('ice-candidate', (incoming) => {
-        io.to(incoming.target).emit('ice-candidate', incoming.candidate);
+        const targetSocketId = userSocketMap[incoming.target];
+        if (targetSocketId) {
+            io.to(targetSocketId).emit('ice-candidate', incoming.candidate);
+        }
     });
 });
 
@@ -54,7 +72,6 @@ app.use('/api/screening', require('./routes/screening'));
 app.use('/api/appointments', require('./routes/appointment'));
 app.use('/api/chat', require('./routes/chat'));
 app.use('/api/forum', require('./routes/forum'));
-app.use('/api/admin', require('./routes/admin'));
 app.use('/api/counsellor-availability', require('./routes/counsellorAvailability'));
 app.use('/api/counsellor-forum', require('./routes/counsellorForum'));
 

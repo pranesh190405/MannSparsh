@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['student', 'counsellor', 'admin', 'peer'],
+        enum: ['student', 'counsellor', 'peer'],
         default: 'student'
     },
     department: String,
@@ -56,10 +56,7 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    isApproved: {
-        type: Boolean,
-        default: function () { return this.role !== 'counsellor'; }
-    },
+
     isVerified: {
         type: Boolean,
         default: false
