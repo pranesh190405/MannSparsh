@@ -42,9 +42,7 @@ const MainLayout = () => {
         { text: 'Pro Forum', icon: <Forum />, path: '/counsellor/forum', color: '#f59e0b' },
     ];
 
-    const menuItems = isCounsellor
-        ? [...counsellorMenuItems, { divider: true }, ...studentMenuItems]
-        : studentMenuItems;
+    const menuItems = isCounsellor ? counsellorMenuItems : studentMenuItems;
 
     const drawer = (
         <Box sx={{

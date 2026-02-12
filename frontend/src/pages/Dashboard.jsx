@@ -182,9 +182,9 @@ const Dashboard = () => {
             {/* Quick Stats */}
             <Grid container spacing={2.5} sx={{ mb: 4 }}>
                 {[
-                    { label: 'Last Screening', value: latestScreening?.severity || 'Not taken', icon: <TrendingUp />, gradient: 'linear-gradient(135deg, #8b5cf6, #6366f1)' },
-                    { label: 'Appointments', value: appointmentCount, icon: <VideoCall />, gradient: 'linear-gradient(135deg, #10b981, #059669)' },
-                    { label: 'Wellness', value: 'Keep going!', icon: <Favorite />, gradient: 'linear-gradient(135deg, #ec4899, #f43f5e)' },
+                    { label: 'Last Screening', value: latestScreening?.severity || 'Not taken', icon: <TrendingUp sx={{ color: '#fff', fontSize: 24 }} />, gradient: 'linear-gradient(135deg, #8b5cf6, #6366f1)' },
+                    { label: 'Appointments', value: appointmentCount, icon: <VideoCall sx={{ color: '#fff', fontSize: 24 }} />, gradient: 'linear-gradient(135deg, #10b981, #059669)' },
+                    { label: 'Wellness', value: 'Keep going!', icon: <Favorite sx={{ color: '#fff', fontSize: 24 }} />, gradient: 'linear-gradient(135deg, #ec4899, #f43f5e)' },
                 ].map((stat, idx) => (
                     <Grid item xs={12} sm={4} key={idx}>
                         <Card className="animate-fadeInUp" sx={{ animationDelay: `${0.1 + idx * 0.15}s` }}>

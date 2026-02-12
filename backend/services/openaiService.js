@@ -1,7 +1,8 @@
 const OpenAI = require('openai');
 
 const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY // Ensure this is set in .env
+    apiKey: process.env.OPENAI_API_KEY,
+    baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/'
 });
 
 const SYSTEM_PROMPT = `
@@ -26,7 +27,7 @@ Crisis Detection Keywords:
 - Severe hopelessness, worthlessness, unbearable pain
 - Immediate danger to self or others
 
-Response Format (JSON):
+You MUST respond in valid JSON format with these fields:
 {
   "emotion": "detected primary emotion (e.g., anxious, sad, stressed, hopeful)",
   "risk_level": "low" | "medium" | "high",
@@ -60,13 +61,11 @@ const CRISIS_KEYWORDS = [
 
 const getChatResponse = async (userMessage, history = []) => {
     try {
-        // Check for crisis keywords
         const lowerMessage = userMessage.toLowerCase();
         const hasCrisisKeyword = CRISIS_KEYWORDS.some(keyword =>
             lowerMessage.includes(keyword)
         );
 
-        // Format history for OpenAI (limit to last 10 messages for context)
         const recentHistory = history.slice(-10);
         const messages = [
             { role: "system", content: SYSTEM_PROMPT },
@@ -78,17 +77,21 @@ const getChatResponse = async (userMessage, history = []) => {
         ];
 
         const completion = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
+            model: "gemini-1.5-flash",
             messages: messages,
-            response_format: { type: "json_object" },
             temperature: 0.7,
             max_tokens: 300
         });
 
         const responseContent = completion.choices[0].message.content;
-        const parsedResponse = JSON.parse(responseContent);
 
-        // Override risk level if crisis keywords detected
+        // Parse JSON — handle markdown code fences that Gemini sometimes wraps
+        let cleanJson = responseContent.trim();
+        if (cleanJson.startsWith('```')) {
+            cleanJson = cleanJson.replace(/^```(?:json)?\s*/, '').replace(/```\s*$/, '').trim();
+        }
+        const parsedResponse = JSON.parse(cleanJson);
+
         if (hasCrisisKeyword && parsedResponse.risk_level !== 'high') {
             parsedResponse.risk_level = 'high';
             parsedResponse.suggest_booking = true;
@@ -97,8 +100,7 @@ const getChatResponse = async (userMessage, history = []) => {
         return parsedResponse;
 
     } catch (error) {
-        console.error("OpenAI Error:", error);
-        // Enhanced fallback response
+        console.error("AI Error:", error.message || error);
         return {
             emotion: "neutral",
             risk_level: "low",

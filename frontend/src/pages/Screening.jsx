@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
 import {
     Box, Button, Typography, Paper, LinearProgress, Card, CardContent,
-    Fade, Chip, Avatar, Stepper, Step, StepLabel, Container, Grid
+    Fade, Chip, Avatar, Container, Grid
 } from '@mui/material';
 import {
     Psychology, SentimentDissatisfied, SentimentSatisfied,
-    SentimentVeryDissatisfied, Warning, CheckCircle, LocalHospital
+    SentimentVeryDissatisfied, CheckCircle, LocalHospital, AutoAwesome
 } from '@mui/icons-material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const SCENARIOS = [
-    // ===== PHQ-9: 9 Depression Questions =====
     {
-        id: 1, testType: 'PHQ9', questionIndex: 0,
-        title: "The Weekend Plans",
-        emoji: "🎬",
+        id: 1, testType: 'PHQ9', questionIndex: 0, title: "The Weekend Plans", emoji: "🎬",
         text: "It's Friday evening. Your friends are buzzing about a movie night. Usually, you'd be the first to join, but lately things feel different...",
         question: "How often have you had little interest or pleasure in doing things?",
         options: [
@@ -26,9 +23,7 @@ const SCENARIOS = [
         ]
     },
     {
-        id: 2, testType: 'PHQ9', questionIndex: 1,
-        title: "The Morning Alarm",
-        emoji: "⏰",
+        id: 2, testType: 'PHQ9', questionIndex: 1, title: "The Morning Alarm", emoji: "⏰",
         text: "Your alarm rings at 7 AM for morning lectures. You open your eyes and the first thought hits you...",
         question: "How often have you been feeling down, depressed, or hopeless?",
         options: [
@@ -39,9 +34,7 @@ const SCENARIOS = [
         ]
     },
     {
-        id: 3, testType: 'PHQ9', questionIndex: 2,
-        title: "The Late Night",
-        emoji: "🌙",
+        id: 3, testType: 'PHQ9', questionIndex: 2, title: "The Late Night", emoji: "🌙",
         text: "It's 2 AM and you're lying in bed. Your mind won't shut off. You toss and turn, or maybe you've been sleeping way too much lately...",
         question: "How often have you had trouble falling asleep, staying asleep, or sleeping too much?",
         options: [
@@ -52,9 +45,7 @@ const SCENARIOS = [
         ]
     },
     {
-        id: 4, testType: 'PHQ9', questionIndex: 3,
-        title: "The Energy Meter",
-        emoji: "🔋",
+        id: 4, testType: 'PHQ9', questionIndex: 3, title: "The Energy Meter", emoji: "🔋",
         text: "You have a full day ahead – lectures, assignments, maybe a gym session. But your body feels like it's running on empty...",
         question: "How often have you been feeling tired or having little energy?",
         options: [
@@ -65,9 +56,7 @@ const SCENARIOS = [
         ]
     },
     {
-        id: 5, testType: 'PHQ9', questionIndex: 4,
-        title: "The Dining Hall",
-        emoji: "🍽️",
+        id: 5, testType: 'PHQ9', questionIndex: 4, title: "The Dining Hall", emoji: "🍽️",
         text: "Lunch time at the mess hall. Your friend saved you a spot, but when you look at the food...",
         question: "How often have you had poor appetite or been overeating?",
         options: [
@@ -78,9 +67,7 @@ const SCENARIOS = [
         ]
     },
     {
-        id: 6, testType: 'PHQ9', questionIndex: 5,
-        title: "The Mirror Moment",
-        emoji: "🪞",
+        id: 6, testType: 'PHQ9', questionIndex: 5, title: "The Mirror Moment", emoji: "🪞",
         text: "You catch your reflection while walking past a glass door on campus. A thought crosses your mind about yourself...",
         question: "How often have you felt bad about yourself, or that you're a failure, or have let yourself or your family down?",
         options: [
@@ -91,9 +78,7 @@ const SCENARIOS = [
         ]
     },
     {
-        id: 7, testType: 'PHQ9', questionIndex: 6,
-        title: "The Study Session",
-        emoji: "📚",
+        id: 7, testType: 'PHQ9', questionIndex: 6, title: "The Study Session", emoji: "📚",
         text: "You sit down to study for an important exam tomorrow. You open your textbook and try to focus, but...",
         question: "How often have you had trouble concentrating on things like reading or watching TV?",
         options: [
@@ -104,9 +89,7 @@ const SCENARIOS = [
         ]
     },
     {
-        id: 8, testType: 'PHQ9', questionIndex: 7,
-        title: "The Group Project",
-        emoji: "🐢",
+        id: 8, testType: 'PHQ9', questionIndex: 7, title: "The Group Project", emoji: "🐢",
         text: "Your teammates are discussing the project deadline. Everyone seems to be moving at normal speed, but you...",
         question: "How often have you been moving or speaking so slowly that others noticed? Or the opposite – being fidgety or restless?",
         options: [
@@ -117,9 +100,7 @@ const SCENARIOS = [
         ]
     },
     {
-        id: 9, testType: 'PHQ9', questionIndex: 8,
-        title: "The Dark Thought",
-        emoji: "💭",
+        id: 9, testType: 'PHQ9', questionIndex: 8, title: "The Dark Thought", emoji: "💭",
         text: "It's a quiet night. You're alone with your thoughts. Sometimes an intrusive thought creeps in...",
         question: "How often have you had thoughts that you would be better off dead, or of hurting yourself?",
         options: [
@@ -129,12 +110,8 @@ const SCENARIOS = [
             { text: "I think about it often. I need help.", score: 3 }
         ]
     },
-
-    // ===== GAD-7: 7 Anxiety Questions =====
     {
-        id: 10, testType: 'GAD7', questionIndex: 0,
-        title: "The Exam Hall",
-        emoji: "📝",
+        id: 10, testType: 'GAD7', questionIndex: 0, title: "The Exam Hall", emoji: "📝",
         text: "Exams are approaching. You're sitting in the library and your heart starts racing just thinking about it...",
         question: "How often have you been feeling nervous, anxious, or on edge?",
         options: [
@@ -145,9 +122,7 @@ const SCENARIOS = [
         ]
     },
     {
-        id: 11, testType: 'GAD7', questionIndex: 1,
-        title: "The Worry Loop",
-        emoji: "🔄",
+        id: 11, testType: 'GAD7', questionIndex: 1, title: "The Worry Loop", emoji: "🔄",
         text: "You're trying to relax, but your brain has other plans. It keeps bringing up worries – grades, future, relationships, everything...",
         question: "How often have you not been able to stop or control worrying?",
         options: [
@@ -158,9 +133,7 @@ const SCENARIOS = [
         ]
     },
     {
-        id: 12, testType: 'GAD7', questionIndex: 2,
-        title: "The Overthinking Marathon",
-        emoji: "🧠",
+        id: 12, testType: 'GAD7', questionIndex: 2, title: "The Overthinking Marathon", emoji: "🧠",
         text: "A friend didn't reply to your message in 3 hours. Your brain starts constructing worst-case scenarios...",
         question: "How often have you been worrying too much about different things?",
         options: [
@@ -171,9 +144,7 @@ const SCENARIOS = [
         ]
     },
     {
-        id: 13, testType: 'GAD7', questionIndex: 3,
-        title: "The Restless Night",
-        emoji: "😰",
+        id: 13, testType: 'GAD7', questionIndex: 3, title: "The Restless Night", emoji: "😰",
         text: "You're watching a movie to unwind, but you can't sit still. There's this restless energy inside you that won't calm down...",
         question: "How often have you had trouble relaxing?",
         options: [
@@ -184,9 +155,7 @@ const SCENARIOS = [
         ]
     },
     {
-        id: 14, testType: 'GAD7', questionIndex: 4,
-        title: "The Restless Body",
-        emoji: "🪑",
+        id: 14, testType: 'GAD7', questionIndex: 4, title: "The Restless Body", emoji: "🪑",
         text: "You're in a long lecture. Everyone else seems calm, but you're fidgeting, tapping your feet, unable to sit still...",
         question: "How often have you been so restless that it's hard to sit still?",
         options: [
@@ -197,9 +166,7 @@ const SCENARIOS = [
         ]
     },
     {
-        id: 15, testType: 'GAD7', questionIndex: 5,
-        title: "The Snap Moment",
-        emoji: "😤",
+        id: 15, testType: 'GAD7', questionIndex: 5, title: "The Snap Moment", emoji: "😤",
         text: "Your roommate leaves their dishes in the sink again. Normally you'd shrug it off, but today...",
         question: "How often have you become easily annoyed or irritable?",
         options: [
@@ -210,9 +177,7 @@ const SCENARIOS = [
         ]
     },
     {
-        id: 16, testType: 'GAD7', questionIndex: 6,
-        title: "The Shadow of Dread",
-        emoji: "😱",
+        id: 16, testType: 'GAD7', questionIndex: 6, title: "The Shadow of Dread", emoji: "😱",
         text: "You wake up in the morning and before your feet touch the floor, there's already a sense of dread. Something bad is going to happen today... you just know it...",
         question: "How often have you felt afraid, as if something awful might happen?",
         options: [
@@ -254,7 +219,6 @@ const Screening = () => {
         const newAnswers = { ...answers };
         newAnswers[scenario.testType] = [...newAnswers[scenario.testType], score];
         setAnswers(newAnswers);
-
         setTimeout(() => {
             setSelectedOption(null);
             if (currentStep < SCENARIOS.length - 1) {
@@ -268,19 +232,15 @@ const Screening = () => {
     const finishTest = async (finalAnswers) => {
         const phqScore = finalAnswers.PHQ9.reduce((a, b) => a + b, 0);
         const gadScore = finalAnswers.GAD7.reduce((a, b) => a + b, 0);
-
         const phqData = getSeverityData(phqScore, 'PHQ9');
         const gadData = getSeverityData(gadScore, 'GAD7');
-
         setResult({ phqScore, gadScore, phqData, gadData });
         setCompleted(true);
-
         try {
             await axios.post('/api/screening/submit', {
                 testType: 'combined',
                 answers: { PHQ9: finalAnswers.PHQ9, GAD7: finalAnswers.GAD7 },
-                phqScore,
-                gadScore,
+                phqScore, gadScore,
                 severity: phqScore > gadScore ? phqData.level : gadData.level
             });
         } catch (err) {
@@ -291,51 +251,71 @@ const Screening = () => {
     // ===== INTRO SCREEN =====
     if (!started) {
         return (
-            <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+            <Container maxWidth="md" sx={{ mt: 4, mb: 4, position: 'relative' }}>
+                {/* Background orb */}
+                <Box sx={{ position: 'absolute', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(139,92,246,0.15), transparent 70%)', top: -60, right: -60, animation: 'orbFloat1 14s ease-in-out infinite', filter: 'blur(50px)', pointerEvents: 'none' }} />
+
                 <Fade in={true}>
-                    <Card sx={{
-                        borderRadius: 4,
-                        overflow: 'hidden',
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        color: 'white',
-                        textAlign: 'center',
-                        p: 6
+                    <Box className="animate-fadeInUp" sx={{
+                        position: 'relative', overflow: 'hidden',
+                        background: 'rgba(255,255,255,0.05)',
+                        backdropFilter: 'blur(24px)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: 5, textAlign: 'center', p: { xs: 4, md: 6 },
                     }}>
-                        <Psychology sx={{ fontSize: 80, mb: 2, opacity: 0.9 }} />
-                        <Typography variant="h3" fontWeight="bold" gutterBottom>
-                            Student Life Simulator
-                        </Typography>
-                        <Typography variant="h6" sx={{ opacity: 0.9, mb: 3 }}>
-                            A Story-Based Mental Health Screening
-                        </Typography>
-                        <Typography variant="body1" sx={{ maxWidth: 500, mx: 'auto', mb: 4, opacity: 0.85 }}>
-                            Walk through 16 realistic campus scenarios and tell us how you'd feel.
-                            This screening uses clinically validated PHQ-9 and GAD-7 questionnaires
-                            presented as relatable student experiences.
-                        </Typography>
-                        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 4, flexWrap: 'wrap' }}>
-                            <Chip label="📊 PHQ-9 Depression" sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white', fontWeight: 600 }} />
-                            <Chip label="📊 GAD-7 Anxiety" sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white', fontWeight: 600 }} />
-                            <Chip label="⏱️ ~5 minutes" sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white', fontWeight: 600 }} />
-                            <Chip label="🔒 100% Private" sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white', fontWeight: 600 }} />
+                        {/* Shimmer overlay */}
+                        <Box sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.04), transparent)', backgroundSize: '200% 100%', animation: 'shimmer 3s linear infinite', pointerEvents: 'none' }} />
+
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            <Box sx={{
+                                width: 80, height: 80, borderRadius: 4, mx: 'auto', mb: 3,
+                                background: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                boxShadow: '0 8px 32px rgba(139,92,246,0.4)',
+                                animation: 'float 3s ease-in-out infinite',
+                            }}>
+                                <Psychology sx={{ fontSize: 44, color: 'white' }} />
+                            </Box>
+
+                            <Typography sx={{
+                                fontSize: { xs: '1.75rem', md: '2.5rem' }, fontWeight: 800, mb: 1,
+                                background: 'linear-gradient(135deg, #fff 0%, #a78bfa 100%)',
+                                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                            }}>
+                                Student Life Simulator
+                            </Typography>
+                            <Typography sx={{ fontSize: '1.05rem', color: 'rgba(255,255,255,0.6)', mb: 1 }}>
+                                A Story-Based Mental Health Screening
+                            </Typography>
+                            <Typography sx={{ maxWidth: 520, mx: 'auto', mb: 4, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7 }}>
+                                Walk through 16 realistic campus scenarios and tell us how you'd feel.
+                                This screening uses clinically validated PHQ-9 and GAD-7 questionnaires
+                                presented as relatable student experiences.
+                            </Typography>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1.5, mb: 4, flexWrap: 'wrap' }}>
+                                {['📊 PHQ-9 Depression', '📊 GAD-7 Anxiety', '⏱️ ~5 minutes', '🔒 100% Private'].map((label) => (
+                                    <Chip key={label} label={label} sx={{
+                                        bgcolor: 'rgba(139,92,246,0.12)', color: '#a78bfa', fontWeight: 600,
+                                        border: '1px solid rgba(139,92,246,0.2)',
+                                    }} />
+                                ))}
+                            </Box>
+
+                            <Button
+                                variant="contained" size="large"
+                                onClick={() => setStarted(true)}
+                                startIcon={<AutoAwesome sx={{ animation: 'spin 3s linear infinite' }} />}
+                                sx={{ px: 6, py: 1.5, fontSize: '1.05rem', fontWeight: 700, borderRadius: 3 }}
+                            >
+                                Begin Assessment
+                            </Button>
+
+                            <Typography sx={{ mt: 3, fontSize: '0.8rem', color: 'rgba(255,255,255,0.35)' }}>
+                                This is not a diagnostic tool. For professional guidance, book a counsellor.
+                            </Typography>
                         </Box>
-                        <Button
-                            variant="contained"
-                            size="large"
-                            onClick={() => setStarted(true)}
-                            sx={{
-                                bgcolor: 'white', color: '#6366f1', fontWeight: 700,
-                                px: 6, py: 1.5, fontSize: '1.1rem',
-                                '&:hover': { bgcolor: '#f0f0ff', transform: 'scale(1.05)' },
-                                transition: 'all 0.3s'
-                            }}
-                        >
-                            Begin Assessment
-                        </Button>
-                        <Typography variant="caption" display="block" sx={{ mt: 3, opacity: 0.7 }}>
-                            This is not a diagnostic tool. For professional guidance, book a counsellor.
-                        </Typography>
-                    </Card>
+                    </Box>
                 </Fade>
             </Container>
         );
@@ -343,111 +323,80 @@ const Screening = () => {
 
     // ===== RESULTS SCREEN =====
     if (completed && result) {
-        const worse = result.phqScore >= result.gadScore ? 'phq' : 'gad';
         const needsHelp = result.phqScore >= 10 || result.gadScore >= 10;
-
         return (
-            <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+            <Container maxWidth="md" sx={{ mt: 4, mb: 4, position: 'relative' }}>
+                <Box sx={{ position: 'absolute', width: 250, height: 250, borderRadius: '50%', background: 'radial-gradient(circle, rgba(16,185,129,0.12), transparent 70%)', bottom: -40, left: -40, animation: 'orbFloat2 16s ease-in-out infinite', filter: 'blur(50px)', pointerEvents: 'none' }} />
+
                 <Fade in={true}>
                     <Box>
-                        <Typography variant="h4" fontWeight="bold" textAlign="center" gutterBottom>
-                            Your Assessment Results
-                        </Typography>
-                        <Typography variant="body1" color="text.secondary" textAlign="center" mb={4}>
-                            Based on your responses to all 16 scenarios
-                        </Typography>
+                        <Box className="animate-fadeInUp" sx={{ textAlign: 'center', mb: 4 }}>
+                            <Typography sx={{
+                                fontSize: { xs: '1.5rem', md: '2rem' }, fontWeight: 800,
+                                background: 'linear-gradient(135deg, #fff, #a78bfa)',
+                                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                            }}>
+                                Your Assessment Results
+                            </Typography>
+                            <Typography sx={{ color: 'rgba(255,255,255,0.5)' }}>
+                                Based on your responses to all 16 scenarios
+                            </Typography>
+                        </Box>
 
                         <Grid container spacing={3} sx={{ mb: 4 }}>
-                            {/* PHQ-9 Result */}
-                            <Grid item xs={12} md={6}>
-                                <Card sx={{
-                                    borderRadius: 3, p: 3, textAlign: 'center',
-                                    border: `2px solid ${result.phqData.color}30`,
-                                    background: `linear-gradient(135deg, ${result.phqData.color}08 0%, ${result.phqData.color}03 100%)`
-                                }}>
-                                    <Typography variant="overline" color="text.secondary">
-                                        Depression Screening (PHQ-9)
-                                    </Typography>
-                                    <Typography variant="h2" fontWeight="bold" sx={{ color: result.phqData.color, my: 1 }}>
-                                        {result.phqScore}/27
-                                    </Typography>
-                                    <Chip
-                                        label={result.phqData.level}
-                                        sx={{
-                                            bgcolor: result.phqData.color + '20',
-                                            color: result.phqData.color,
-                                            fontWeight: 700, fontSize: '0.9rem', mb: 2
-                                        }}
-                                    />
-                                    <Typography variant="body2" color="text.secondary">
-                                        {result.phqData.description}
-                                    </Typography>
-                                </Card>
-                            </Grid>
-
-                            {/* GAD-7 Result */}
-                            <Grid item xs={12} md={6}>
-                                <Card sx={{
-                                    borderRadius: 3, p: 3, textAlign: 'center',
-                                    border: `2px solid ${result.gadData.color}30`,
-                                    background: `linear-gradient(135deg, ${result.gadData.color}08 0%, ${result.gadData.color}03 100%)`
-                                }}>
-                                    <Typography variant="overline" color="text.secondary">
-                                        Anxiety Screening (GAD-7)
-                                    </Typography>
-                                    <Typography variant="h2" fontWeight="bold" sx={{ color: result.gadData.color, my: 1 }}>
-                                        {result.gadScore}/21
-                                    </Typography>
-                                    <Chip
-                                        label={result.gadData.level}
-                                        sx={{
-                                            bgcolor: result.gadData.color + '20',
-                                            color: result.gadData.color,
-                                            fontWeight: 700, fontSize: '0.9rem', mb: 2
-                                        }}
-                                    />
-                                    <Typography variant="body2" color="text.secondary">
-                                        {result.gadData.description}
-                                    </Typography>
-                                </Card>
-                            </Grid>
+                            {[
+                                { label: 'Depression Screening (PHQ-9)', score: result.phqScore, max: 27, data: result.phqData },
+                                { label: 'Anxiety Screening (GAD-7)', score: result.gadScore, max: 21, data: result.gadData },
+                            ].map((item, idx) => (
+                                <Grid item xs={12} md={6} key={idx}>
+                                    <Card className="animate-fadeInUp" sx={{ animationDelay: `${idx * 0.15}s`, textAlign: 'center', p: 3 }}>
+                                        <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.4)' }}>{item.label}</Typography>
+                                        <Typography sx={{ fontSize: '2.5rem', fontWeight: 800, color: item.data.color, my: 1 }}>
+                                            {item.score}/{item.max}
+                                        </Typography>
+                                        <Chip label={item.data.level} sx={{
+                                            bgcolor: item.data.color + '20', color: item.data.color,
+                                            fontWeight: 700, fontSize: '0.85rem', mb: 2,
+                                            border: '1px solid ' + item.data.color + '30',
+                                        }} />
+                                        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.5)' }}>{item.data.description}</Typography>
+                                    </Card>
+                                </Grid>
+                            ))}
                         </Grid>
 
-                        {/* Recommendations */}
-                        <Card sx={{ borderRadius: 3, p: 3, mb: 3 }}>
-                            <Typography variant="h6" fontWeight="bold" gutterBottom>
+                        <Card className="animate-fadeInUp delay-2" sx={{ p: 3, mb: 3 }}>
+                            <Typography variant="h6" fontWeight={700} gutterBottom>
                                 {needsHelp ? '🔔 We Recommend' : '✅ Keep It Up!'}
                             </Typography>
-                            <Box component="ul" sx={{ pl: 2 }}>
+                            <Box component="ul" sx={{ pl: 2, '& li': { mb: 1 } }}>
                                 {needsHelp ? (
                                     <>
-                                        <li><Typography variant="body2">Book a session with a professional counsellor on campus</Typography></li>
-                                        <li><Typography variant="body2">Talk to someone you trust about how you're feeling</Typography></li>
-                                        <li><Typography variant="body2">Use our AI chat for immediate coping strategies</Typography></li>
-                                        <li><Typography variant="body2">Consider re-taking this screening in 2 weeks to track changes</Typography></li>
+                                        <li><Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>Book a session with a professional counsellor on campus</Typography></li>
+                                        <li><Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>Talk to someone you trust about how you're feeling</Typography></li>
+                                        <li><Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>Use our AI chat for immediate coping strategies</Typography></li>
+                                        <li><Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>Consider re-taking this screening in 2 weeks</Typography></li>
                                     </>
                                 ) : (
                                     <>
-                                        <li><Typography variant="body2">Continue your healthy routines and self-care habits</Typography></li>
-                                        <li><Typography variant="body2">Stay connected with friends and family</Typography></li>
-                                        <li><Typography variant="body2">Consider periodic check-ins with our screening tool</Typography></li>
+                                        <li><Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>Continue your healthy routines and self-care habits</Typography></li>
+                                        <li><Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>Stay connected with friends and family</Typography></li>
+                                        <li><Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>Consider periodic check-ins with our screening tool</Typography></li>
                                     </>
                                 )}
                             </Box>
                         </Card>
 
                         <Box display="flex" justifyContent="center" gap={2} flexWrap="wrap">
-                            <Button variant="outlined" onClick={() => navigate('/')} size="large">
+                            <Button variant="outlined" onClick={() => navigate('/')} size="large" sx={{ borderRadius: 3 }}>
                                 Back to Dashboard
                             </Button>
-                            <Button variant="outlined" onClick={() => navigate('/chat')} size="large"
-                                startIcon={<Psychology />}>
+                            <Button variant="outlined" onClick={() => navigate('/chat')} size="large" startIcon={<Psychology />} sx={{ borderRadius: 3 }}>
                                 Talk to AI Chat
                             </Button>
                             {needsHelp && (
                                 <Button variant="contained" onClick={() => navigate('/appointments')} size="large"
-                                    startIcon={<LocalHospital />}
-                                    sx={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
+                                    startIcon={<LocalHospital />} sx={{ borderRadius: 3, fontWeight: 700 }}>
                                     Book a Counsellor
                                 </Button>
                             )}
@@ -462,6 +411,7 @@ const Screening = () => {
     const scenario = SCENARIOS[currentStep];
     const progress = ((currentStep) / SCENARIOS.length) * 100;
     const isPhq = scenario.testType === 'PHQ9';
+    const accentColor = isPhq ? '#8b5cf6' : '#ec4899';
 
     return (
         <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
@@ -471,68 +421,58 @@ const Screening = () => {
                     label={isPhq ? '📊 Depression (PHQ-9)' : '📊 Anxiety (GAD-7)'}
                     size="small"
                     sx={{
-                        bgcolor: isPhq ? '#6366f120' : '#ec489920',
-                        color: isPhq ? '#6366f1' : '#ec4899',
-                        fontWeight: 600
+                        bgcolor: accentColor + '15', color: accentColor,
+                        fontWeight: 600, border: '1px solid ' + accentColor + '25',
                     }}
                 />
-                <Typography variant="body2" color="text.secondary" fontWeight={600}>
+                <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>
                     {currentStep + 1} of {SCENARIOS.length}
                 </Typography>
             </Box>
             <LinearProgress
-                variant="determinate"
-                value={progress}
+                variant="determinate" value={progress}
                 sx={{
-                    mb: 4, height: 8, borderRadius: 4,
-                    bgcolor: '#e2e8f0',
+                    mb: 4, height: 6, borderRadius: 4,
+                    bgcolor: 'rgba(255,255,255,0.06)',
                     '& .MuiLinearProgress-bar': {
                         borderRadius: 4,
-                        background: isPhq
-                            ? 'linear-gradient(90deg, #6366f1, #8b5cf6)'
-                            : 'linear-gradient(90deg, #ec4899, #f472b6)'
+                        background: `linear-gradient(90deg, ${accentColor}, ${accentColor}aa)`,
                     }
                 }}
             />
 
             <Fade in={true} key={currentStep} timeout={400}>
-                <Card sx={{
-                    borderRadius: 4, overflow: 'hidden',
-                    boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
-                    border: '1px solid #e2e8f0'
-                }}>
-                    <CardContent sx={{ p: 4 }}>
+                <Card sx={{ overflow: 'hidden' }}>
+                    <CardContent sx={{ p: { xs: 3, md: 4 } }}>
                         {/* Scenario Header */}
                         <Box display="flex" alignItems="center" gap={2} mb={3}>
                             <Avatar sx={{
                                 width: 56, height: 56, fontSize: '1.8rem',
-                                bgcolor: isPhq ? '#6366f115' : '#ec489915'
+                                bgcolor: accentColor + '15',
+                                border: '1px solid ' + accentColor + '25',
                             }}>
                                 {scenario.emoji}
                             </Avatar>
                             <Box>
-                                <Typography variant="h5" fontWeight="bold">
-                                    {scenario.title}
-                                </Typography>
-                                <Typography variant="caption" color="text.secondary">
+                                <Typography variant="h5" fontWeight={700}>{scenario.title}</Typography>
+                                <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)' }}>
                                     Scenario {currentStep + 1}
                                 </Typography>
                             </Box>
                         </Box>
 
-                        {/* Story Text */}
-                        <Typography variant="body1" sx={{
-                            fontSize: '1.1rem', lineHeight: 1.8, mb: 3,
-                            color: '#475569', fontStyle: 'italic',
-                            borderLeft: '3px solid',
-                            borderColor: isPhq ? '#6366f1' : '#ec4899',
-                            pl: 2
+                        {/* Story */}
+                        <Typography sx={{
+                            fontSize: '1.05rem', lineHeight: 1.8, mb: 3,
+                            color: 'rgba(255,255,255,0.55)', fontStyle: 'italic',
+                            borderLeft: '3px solid ' + accentColor,
+                            pl: 2,
                         }}>
                             {scenario.text}
                         </Typography>
 
-                        {/* Clinical Question */}
-                        <Typography variant="body2" fontWeight="bold" color="text.secondary" mb={2}>
+                        {/* Q */}
+                        <Typography variant="body2" fontWeight={700} sx={{ color: 'rgba(255,255,255,0.7)', mb: 2 }}>
                             {scenario.question}
                         </Typography>
 
@@ -547,17 +487,15 @@ const Screening = () => {
                                     disabled={selectedOption !== null}
                                     sx={{
                                         justifyContent: 'flex-start', textAlign: 'left',
-                                        py: 2, px: 3, borderRadius: 2,
-                                        borderColor: selectedOption === option.score ? 'primary.main' : '#e2e8f0',
-                                        color: selectedOption === option.score ? 'white' : 'text.primary',
-                                        bgcolor: selectedOption === option.score
-                                            ? (isPhq ? '#6366f1' : '#ec4899')
-                                            : 'transparent',
-                                        transition: 'all 0.2s',
+                                        py: 2, px: 3, borderRadius: 3,
+                                        borderColor: selectedOption === option.score ? accentColor : 'rgba(255,255,255,0.08)',
+                                        color: selectedOption === option.score ? 'white' : 'rgba(255,255,255,0.7)',
+                                        bgcolor: selectedOption === option.score ? accentColor : 'transparent',
+                                        transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
                                         '&:hover': {
-                                            bgcolor: isPhq ? '#6366f110' : '#ec489910',
-                                            borderColor: isPhq ? '#6366f1' : '#ec4899',
-                                            transform: 'translateX(4px)'
+                                            bgcolor: accentColor + '10',
+                                            borderColor: accentColor + '40',
+                                            transform: 'translateX(6px)',
                                         }
                                     }}
                                 >
