@@ -84,7 +84,21 @@ const Register = () => {
 
                     {error && <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>{error}</Alert>}
 
-                    <Box component="form" onSubmit={formik.handleSubmit} noValidate>
+                    <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{
+                        '& .MuiTextField-root': {
+                            mb: 2,
+                            '& .MuiInputBase-input': { color: '#333' },
+                            '& .MuiInputLabel-root': { color: '#666' },
+                            '& .MuiInputLabel-root.Mui-focused': { color: '#6366f1' },
+                            '& .MuiOutlinedInput-root': {
+                                background: 'rgba(0, 0, 0, 0.05)',
+                                '& fieldset': { borderColor: 'rgba(0, 0, 0, 0.2)' },
+                                '&:hover fieldset': { borderColor: '#6366f1' },
+                                '&.Mui-focused fieldset': { borderColor: '#6366f1' },
+                            }
+                        },
+                        '& .MuiMenuItem-root': { color: '#333' } // For select dropdowns if needed
+                    }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField

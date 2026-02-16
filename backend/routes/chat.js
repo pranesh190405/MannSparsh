@@ -10,6 +10,10 @@ router.post('/message', auth, async (req, res) => {
     try {
         const { message } = req.body;
         const userId = req.user.user.id;
+        
+        console.log("=== Chat Message Received ===");
+        console.log("User ID:", userId);
+        console.log("Message:", message.substring(0, 100));
 
         // 1. Get or Create Chat Log for today/session
         // For simplicity, we append to a single log or create new one per day
@@ -26,7 +30,14 @@ router.post('/message', auth, async (req, res) => {
         // 3. Call Cloud AI (OpenAI)
         // Pass recent history context (last 5 messages)
         const history = chatLog.messages.slice(-5);
+        console.log("Calling AI service with history length:", history.length);
         const aiResponse = await getChatResponse(message, history);
+        console.log("AI Response received:", {
+            emotion: aiResponse.emotion,
+            risk_level: aiResponse.risk_level,
+            suggest_booking: aiResponse.suggest_booking,
+            message_length: aiResponse.message.length
+        });
 
         // 4. Update Chat Log with AI analysis
         if (aiResponse.risk_level === 'high') {
@@ -49,7 +60,10 @@ router.post('/message', auth, async (req, res) => {
 
         res.json({
             message: fullResponse,
-            analysis: aiResponse
+            emotion: aiResponse.emotion,
+            risk_level: aiResponse.risk_level,
+            suggest_booking: aiResponse.suggest_booking,
+            suggest_screening: aiResponse.suggest_screening
         });
 
     } catch (err) {

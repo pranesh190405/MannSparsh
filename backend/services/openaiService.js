@@ -1,9 +1,7 @@
-const OpenAI = require('openai');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-    baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/'
-});
+// Access your API key as an environment variable (see "Set up your API key" above)
+const genAI = new GoogleGenerativeAI(process.env.OPENAI_API_KEY);
 
 const SYSTEM_PROMPT = `
 You are MannSparsh AI, a compassionate and supportive mental health first-aid assistant specifically designed for university students.
@@ -66,31 +64,50 @@ const getChatResponse = async (userMessage, history = []) => {
             lowerMessage.includes(keyword)
         );
 
-        const recentHistory = history.slice(-10);
-        const messages = [
-            { role: "system", content: SYSTEM_PROMPT },
-            ...recentHistory.map(msg => ({
-                role: msg.sender === 'user' ? 'user' : 'assistant',
-                content: msg.content
-            })),
-            { role: "user", content: userMessage }
-        ];
+        // For Gemini, we use 'model.generateContent'
+        // The history needs to be formatted differently if we want multi-turn chat
+        // using 'startChat'. However, for simplicity and to match the previous structure,
+        // we can just concatenate the system prompt + history + current message into one big prompt
+        // OR use the proper history format. Let's use the single-turn generateContent with instructions for now.
 
-        const completion = await openai.chat.completions.create({
-            model: "gemini-1.5-flash",
-            messages: messages,
-            temperature: 0.7,
-            max_tokens: 300
+        // Construct the full prompt
+        let prompt = SYSTEM_PROMPT + "\n\nChat History:\n";
+        history.slice(-5).forEach(msg => {
+            prompt += `${msg.sender}: ${msg.content}\n`;
         });
+        prompt += `\nUser: ${userMessage}\nAssistant (JSON):`;
 
-        const responseContent = completion.choices[0].message.content;
+        // Get the model
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+        console.log("Sending request to Gemini API with prompt length:", prompt.length);
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+        console.log("Gemini API response received, text length:", text.length);
 
         // Parse JSON — handle markdown code fences that Gemini sometimes wraps
-        let cleanJson = responseContent.trim();
+        let cleanJson = text.trim();
         if (cleanJson.startsWith('```')) {
             cleanJson = cleanJson.replace(/^```(?:json)?\s*/, '').replace(/```\s*$/, '').trim();
         }
-        const parsedResponse = JSON.parse(cleanJson);
+
+        let parsedResponse;
+        try {
+            parsedResponse = JSON.parse(cleanJson);
+        } catch (e) {
+            console.error("JSON Parse Error:", e);
+            console.error("Raw Text:", text);
+            // Fallback if JSON fails
+            parsedResponse = {
+                emotion: "neutral",
+                risk_level: "low",
+                suggest_booking: false,
+                suggest_screening: false,
+                message: text // Return raw text if parsing fails
+            };
+        }
+
 
         if (hasCrisisKeyword && parsedResponse.risk_level !== 'high') {
             parsedResponse.risk_level = 'high';
@@ -100,7 +117,11 @@ const getChatResponse = async (userMessage, history = []) => {
         return parsedResponse;
 
     } catch (error) {
-        console.error("AI Error:", error.message || error);
+        console.error("AI Error - Full Details:");
+        console.error("Error Type:", error.constructor.name);
+        console.error("Error Message:", error.message || error);
+        if (error.stack) console.error("Stack:", error.stack);
+        console.error("Full Error Object:", JSON.stringify(error, null, 2));
         return {
             emotion: "neutral",
             risk_level: "low",

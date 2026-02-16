@@ -1,7 +1,11 @@
 node_modules/
 .env
+.env.local
+.env.*.local
 build/
 dist/
 .DS_Store
 coverage/
 .vscode/
+*.bat
+start_mongo.bat
