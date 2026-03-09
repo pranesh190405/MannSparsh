@@ -80,6 +80,8 @@ router.post('/register', async (req, res) => {
     }
 });
 
+const ChatLog = require('../models/ChatLog'); // Import ChatLog model
+
 // Login User
 router.post('/login', async (req, res) => {
     try {
@@ -96,6 +98,9 @@ router.post('/login', async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid Credentials' });
         }
+
+        // Clear chat history on login
+        await ChatLog.deleteMany({ userId: user.id });
 
         // Create JWT
         const payload = {

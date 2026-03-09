@@ -121,7 +121,18 @@ const Login = () => {
                         </Alert>
                     )}
 
-                    <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ position: 'relative', zIndex: 1 }}>
+                    <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{
+                        position: 'relative', zIndex: 1,
+                        '& .MuiInputBase-input': { color: '#fff' },
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': { borderColor: 'rgba(255,255,255,0.2)' },
+                            '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.4)' },
+                            '&.Mui-focused fieldset': { borderColor: '#a78bfa' },
+                        },
+                        '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.5)' },
+                        '& .MuiInputLabel-root.Mui-focused': { color: '#a78bfa' },
+                        '& .MuiFormHelperText-root': { color: 'rgba(255,255,255,0.4)' },
+                    }}>
                         <TextField
                             margin="normal" required fullWidth
                             id="email" label="University Email" name="email"
