@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const ChatLog = require('../models/ChatLog');
 const auth = require('../middleware/authMiddleware');
-const { getChatResponse } = require('../services/openaiService');
+const { getChatResponse } = require('../services/geminiService');
 const localAgent = require('../services/localAgent');
 
 // Send Message
@@ -27,7 +27,7 @@ router.post('/message', auth, async (req, res) => {
         // 2. Add User Message
         chatLog.messages.push({ sender: 'user', content: message });
 
-        // 3. Call Cloud AI (OpenAI)
+        // 3. Call Cloud AI (Gemini)
         // Pass recent history context (last 5 messages)
         const history = chatLog.messages.slice(-5);
         console.log("Calling AI service with history length:", history.length);
