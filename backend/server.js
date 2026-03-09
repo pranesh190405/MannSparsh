@@ -4,18 +4,31 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
+const helmet = require('helmet');
+const morgan = require('morgan');
 
 const app = express();
 const server = http.createServer(app);
 
 // Middleware
-app.use(cors());
+app.use(helmet());
+if (process.env.NODE_ENV === 'development') {
+    app.use(morgan('dev'));
+} else {
+    app.use(morgan('combined')); // detailed logs in production
+}
+
+app.use(cors({
+    origin: process.env.FRONTEND_URL || '*', // Allow frontend URL in production
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+}));
 app.use(express.json());
 
 // Socket.io Setup
 const io = new Server(server, {
     cors: {
-        origin: "*", // Allow all origins for now, restrict in production
+        origin: process.env.FRONTEND_URL || "*", // restrict in production
         methods: ["GET", "POST"]
     }
 });
@@ -75,6 +88,15 @@ app.use('/api/forum', require('./routes/forum'));
 app.use('/api/counsellor-availability', require('./routes/counsellorAvailability'));
 app.use('/api/counsellor-forum', require('./routes/counsellorForum'));
 app.use('/api/analytics', require('./routes/analytics'));
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+    console.error('Unhandled Error:', err);
+    res.status(err.status || 500).json({
+        message: err.message || 'Internal Server Error',
+        ...(process.env.NODE_ENV !== 'production' && { stack: err.stack })
+    });
+});
 
 const PORT = process.env.PORT || 5000;
 

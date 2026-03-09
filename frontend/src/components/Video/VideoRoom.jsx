@@ -234,7 +234,8 @@ const VideoRoom = () => {
             createPeerConnection(stream);
 
             // 3. THEN connect socket and join room
-            const socket = io('/', { path: '/socket.io' });
+            const backendUrl = import.meta.env.VITE_APP_URL || '/';
+            const socket = io(backendUrl, { path: '/socket.io' });
             socketRef.current = socket;
 
             socket.on('user-connected', (userId) => {
