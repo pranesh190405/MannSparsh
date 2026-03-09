@@ -108,7 +108,6 @@ const getChatResponse = async (userMessage, history = []) => {
             };
         }
 
-
         if (hasCrisisKeyword && parsedResponse.risk_level !== 'high') {
             parsedResponse.risk_level = 'high';
             parsedResponse.suggest_booking = true;

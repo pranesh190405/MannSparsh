@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
     Container, Box, Typography, TextField, Button, MenuItem,
-    Paper, Alert, Grid
+    Paper, Alert, Grid, Divider
 } from '@mui/material';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useAuth } from '../context/AuthContext';
+import { MedicalServices } from '@mui/icons-material';
 
 const validationSchema = Yup.object({
     name: Yup.string().required('Full name is required'),
@@ -55,33 +56,60 @@ const CounsellorRegister = () => {
         <Box
             sx={{
                 minHeight: '100vh',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: 'linear-gradient(135deg, #1e143c 0%, #170f2e 100%)', // matching the dark layout concept
                 display: 'flex',
                 alignItems: 'center',
-                py: 4
+                position: 'relative',
+                overflow: 'hidden',
+                py: { xs: 2, sm: 4 }
             }}
         >
-            <Container maxWidth="md">
+            {/* Background Orbs (consistent with Login page) */}
+            <Box sx={{
+                position: 'absolute', width: 400, height: 400, borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(139,92,246,0.15), transparent 70%)',
+                top: '-10%', left: '-10%',
+                animation: 'orbFloat1 15s ease-in-out infinite',
+                filter: 'blur(60px)',
+            }} />
+            <Box sx={{
+                position: 'absolute', width: 350, height: 350, borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(236,72,153,0.1), transparent 70%)',
+                bottom: '-5%', right: '-5%',
+                animation: 'orbFloat2 18s ease-in-out infinite',
+                filter: 'blur(60px)',
+            }} />
+
+            <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1 }}>
                 <Paper
                     elevation={6}
                     sx={{
-                        p: 4,
-                        borderRadius: 3,
-                        background: 'rgba(255, 255, 255, 0.95)',
-                        backdropFilter: 'blur(10px)'
+                        p: { xs: 3, sm: 5 }, width: '100%', borderRadius: { xs: 3, sm: 4 },
+                        background: 'rgba(30, 20, 60, 0.95)',
+                        backdropFilter: 'blur(20px)',
+                        border: '1px solid rgba(255,255,255,0.05)',
+                        boxShadow: '0 20px 60px rgba(0,0,0,0.4)',
                     }}
                 >
                     <Box textAlign="center" mb={3}>
-                        <Typography variant="h4" fontWeight="bold" color="primary" gutterBottom>
+                        <Box sx={{
+                            width: 64, height: 64, borderRadius: 3, mx: 'auto', mb: 2,
+                            background: 'linear-gradient(135deg, #ec4899 0%, #f43f5e 100%)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            boxShadow: '0 8px 32px rgba(236, 72, 153, 0.4)',
+                        }}>
+                            <MedicalServices sx={{ fontSize: 36, color: 'white' }} />
+                        </Box>
+                        <Typography variant="h4" fontWeight="bold" sx={{ color: '#ffffff' }} gutterBottom>
                             Join as a Counsellor
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="body2" sx={{ color: '#d1d5db' }}>
                             Help students navigate their mental health journey
                         </Typography>
                     </Box>
 
                     {error && (
-                        <Alert severity="error" sx={{ mb: 2 }}>
+                        <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>
                             {error}
                         </Alert>
                     )}
@@ -100,83 +128,103 @@ const CounsellorRegister = () => {
                         validationSchema={validationSchema}
                         onSubmit={handleSubmit}
                     >
-                        {({ errors, touched, isSubmitting }) => (
+                        {({ errors, touched, isSubmitting, values }) => (
                             <Form>
                                 <Grid container spacing={2} sx={{
-                                    '& .MuiInputBase-input': { color: '#1a1a2e' },
+                                    '& .MuiTextField-root': { mb: 2 },
+                                    '& .MuiInputBase-input': { color: '#ffffff', '&::placeholder': { color: 'rgba(255,255,255,0.4)', opacity: 1 } },
                                     '& .MuiOutlinedInput-root': {
-                                        bgcolor: 'rgba(255,255,255,0.9)',
-                                        '& fieldset': { borderColor: 'rgba(99,102,241,0.3)' },
-                                        '&:hover fieldset': { borderColor: 'rgba(99,102,241,0.5)' },
-                                        '&.Mui-focused fieldset': { borderColor: '#6366f1' },
+                                        background: 'rgba(255, 255, 255, 0.05)',
+                                        '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.2)' },
+                                        '&:hover fieldset': { borderColor: '#f472b6' },
+                                        '&.Mui-focused fieldset': { borderColor: '#f472b6' },
+                                        '& svg': { color: '#ffffff' }
                                     },
-                                    '& .MuiInputLabel-root': { color: '#555' },
-                                    '& .MuiInputLabel-root.Mui-focused': { color: '#6366f1' },
-                                    '& .MuiSelect-icon': { color: '#555' },
+                                    '& .MuiMenuItem-root': { color: '#333' }
                                 }}>
                                     <Grid item xs={12} sm={6}>
+                                        <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                            Full Name *
+                                        </Typography>
                                         <Field
                                             as={TextField}
                                             fullWidth
                                             name="name"
-                                            label="Full Name *"
+                                            placeholder="Enter your full name"
                                             error={touched.name && Boolean(errors.name)}
                                             helperText={touched.name && errors.name}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
+                                        <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                            University ID / License No *
+                                        </Typography>
                                         <Field
                                             as={TextField}
                                             fullWidth
                                             name="universityId"
-                                            label="University ID / License No *"
+                                            placeholder="Enter your license or ID"
                                             error={touched.universityId && Boolean(errors.universityId)}
                                             helperText={touched.universityId && errors.universityId}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
+                                        <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                            Professional Email *
+                                        </Typography>
                                         <Field
                                             as={TextField}
                                             fullWidth
                                             name="email"
-                                            label="Professional Email *"
                                             type="email"
+                                            placeholder="example@clinic.com"
                                             error={touched.email && Boolean(errors.email)}
                                             helperText={touched.email && errors.email}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
+                                        <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                            Password *
+                                        </Typography>
                                         <Field
                                             as={TextField}
                                             fullWidth
                                             name="password"
-                                            label="Password *"
                                             type="password"
+                                            placeholder="Create a password"
                                             error={touched.password && Boolean(errors.password)}
                                             helperText={touched.password && errors.password}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
+                                        <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                            Confirm Password *
+                                        </Typography>
                                         <Field
                                             as={TextField}
                                             fullWidth
                                             name="confirmPassword"
-                                            label="Confirm Password *"
                                             type="password"
+                                            placeholder="Confirm your password"
                                             error={touched.confirmPassword && Boolean(errors.confirmPassword)}
                                             helperText={touched.confirmPassword && errors.confirmPassword}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
+                                        <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                            Specialization *
+                                        </Typography>
                                         <Field
                                             as={TextField}
                                             select
                                             fullWidth
+                                            displayEmpty
                                             name="specialization"
-                                            label="Specialization *"
                                             error={touched.specialization && Boolean(errors.specialization)}
                                             helperText={touched.specialization && errors.specialization}
+                                            sx={{ '& .MuiSelect-select': { color: values.specialization ? '#ffffff' : 'rgba(255,255,255,0.4)' } }}
                                         >
+                                            <MenuItem value="" disabled>Select Specialization</MenuItem>
                                             {specializations.map((option) => (
                                                 <MenuItem key={option.value} value={option.value}>
                                                     {option.label}
@@ -185,24 +233,28 @@ const CounsellorRegister = () => {
                                         </Field>
                                     </Grid>
                                     <Grid item xs={12}>
+                                        <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                            Credentials & Qualifications *
+                                        </Typography>
                                         <Field
                                             as={TextField}
                                             fullWidth
                                             name="credentials"
-                                            label="Credentials & Qualifications *"
                                             placeholder="e.g., M.A. Clinical Psychology, Licensed Counsellor"
                                             error={touched.credentials && Boolean(errors.credentials)}
                                             helperText={touched.credentials && errors.credentials}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
+                                        <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                            Professional Bio (Optional)
+                                        </Typography>
                                         <Field
                                             as={TextField}
                                             fullWidth
                                             multiline
                                             rows={3}
                                             name="bio"
-                                            label="Professional Bio (Optional)"
                                             placeholder="Brief introduction about your experience and approach..."
                                             error={touched.bio && Boolean(errors.bio)}
                                             helperText={touched.bio && errors.bio}
@@ -216,27 +268,42 @@ const CounsellorRegister = () => {
                                     variant="contained"
                                     size="large"
                                     disabled={isSubmitting}
-                                    sx={{ mt: 3, mb: 2, py: 1.5 }}
+                                    sx={{
+                                        mt: 3, mb: 2, py: 1.5,
+                                        background: 'linear-gradient(135deg, #ec4899 0%, #f43f5e 100%)',
+                                        fontSize: '1rem', fontWeight: 600,
+                                        '&:hover': {
+                                            background: 'linear-gradient(135deg, #db2777 0%, #e11d48 100%)',
+                                            transform: 'translateY(-1px)',
+                                            boxShadow: '0 8px 25px rgba(236, 72, 153, 0.4)'
+                                        },
+                                        transition: 'all 0.3s'
+                                    }}
                                 >
                                     {isSubmitting ? 'Registering...' : 'Register as Counsellor'}
                                 </Button>
 
                                 <Box textAlign="center">
-                                    <Typography variant="body2" color="text.secondary">
+                                    <Typography variant="body2" sx={{ color: '#d1d5db' }}>
                                         Already have an account?{' '}
-                                        <Link to="/login" style={{ color: '#4361ee', textDecoration: 'none' }}>
+                                        <Link to="/login" style={{ color: '#f472b6', textDecoration: 'none', fontWeight: 600 }}>
                                             Sign in
                                         </Link>
                                     </Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+
+                                    <Divider sx={{ my: 2, borderColor: 'rgba(255,255,255,0.2)' }}>
+                                        <Typography variant="body2" sx={{ color: '#9ca3af' }}>OR</Typography>
+                                    </Divider>
+
+                                    <Typography variant="body2" sx={{ color: '#d1d5db' }}>
                                         Are you a student?{' '}
-                                        <Link to="/register" style={{ color: '#4361ee', textDecoration: 'none' }}>
+                                        <Link to="/register" style={{ color: '#8b5cf6', textDecoration: 'none', fontWeight: 600 }}>
                                             Student Registration
                                         </Link>
                                     </Typography>
                                 </Box>
 
-                                <Alert severity="success" sx={{ mt: 2 }}>
+                                <Alert severity="info" sx={{ mt: 3, borderRadius: 2, bgcolor: 'rgba(56, 189, 248, 0.1)', color: '#bae6fd', border: '1px solid rgba(56, 189, 248, 0.2)' }}>
                                     Your account will be ready to use immediately after registration.
                                 </Alert>
                             </Form>

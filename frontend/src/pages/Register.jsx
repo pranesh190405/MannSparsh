@@ -62,22 +62,22 @@ const Register = () => {
             <Container maxWidth="md" sx={{ display: 'flex', alignItems: 'center', py: { xs: 2, sm: 4 } }}>
                 <Paper elevation={6} sx={{
                     p: { xs: 3, sm: 5 }, width: '100%', borderRadius: { xs: 3, sm: 4 },
-                    background: 'rgba(255,255,255,0.95)',
+                    background: 'rgba(30, 20, 60, 0.95)',
                     backdropFilter: 'blur(20px)'
                 }}>
                     {/* Logo */}
                     <Box textAlign="center" mb={3}>
                         <Box sx={{
                             width: 64, height: 64, borderRadius: 3, mx: 'auto', mb: 2,
-                            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                            background: 'linear-gradient(135deg, #818cf8 0%, #c084fc 100%)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center'
                         }}>
                             <School sx={{ fontSize: 36, color: 'white' }} />
                         </Box>
-                        <Typography variant="h4" fontWeight="bold" color="primary">
+                        <Typography variant="h4" fontWeight="bold" sx={{ color: '#ffffff' }}>
                             Join MannSparsh
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="body2" sx={{ color: '#d1d5db' }}>
                             Create your account and start your wellness journey
                         </Typography>
                     </Box>
@@ -87,23 +87,25 @@ const Register = () => {
                     <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{
                         '& .MuiTextField-root': {
                             mb: 2,
-                            '& .MuiInputBase-input': { color: '#333' },
-                            '& .MuiInputLabel-root': { color: '#666' },
-                            '& .MuiInputLabel-root.Mui-focused': { color: '#6366f1' },
+                            '& .MuiInputBase-input': { color: '#ffffff', '&::placeholder': { color: 'rgba(255,255,255,0.4)', opacity: 1 } },
                             '& .MuiOutlinedInput-root': {
-                                background: 'rgba(0, 0, 0, 0.05)',
-                                '& fieldset': { borderColor: 'rgba(0, 0, 0, 0.2)' },
-                                '&:hover fieldset': { borderColor: '#6366f1' },
-                                '&.Mui-focused fieldset': { borderColor: '#6366f1' },
+                                background: 'rgba(255, 255, 255, 0.08)',
+                                '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.2)' },
+                                '&:hover fieldset': { borderColor: '#a78bfa' },
+                                '&.Mui-focused fieldset': { borderColor: '#a78bfa' },
+                                '& svg': { color: '#ffffff' }
                             }
                         },
-                        '& .MuiMenuItem-root': { color: '#333' } // For select dropdowns if needed
+                        '& .MuiMenuItem-root': { color: '#333' }
                     }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
+                                <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                    Full Name *
+                                </Typography>
                                 <TextField
                                     name="name" required fullWidth id="name"
-                                    label="Full Name" autoFocus
+                                    placeholder="Enter your full name" autoFocus
                                     value={formik.values.name}
                                     onChange={formik.handleChange}
                                     error={formik.touched.name && Boolean(formik.errors.name)}
@@ -111,9 +113,12 @@ const Register = () => {
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
+                                <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                    University ID / Roll No *
+                                </Typography>
                                 <TextField
                                     required fullWidth id="universityId"
-                                    label="University ID / Roll No" name="universityId"
+                                    placeholder="Enter University ID" name="universityId"
                                     value={formik.values.universityId}
                                     onChange={formik.handleChange}
                                     error={formik.touched.universityId && Boolean(formik.errors.universityId)}
@@ -121,8 +126,11 @@ const Register = () => {
                                 />
                             </Grid>
                             <Grid item xs={12}>
+                                <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                    University Email *
+                                </Typography>
                                 <TextField
-                                    required fullWidth id="email" label="University Email"
+                                    required fullWidth id="email" placeholder="example@university.edu"
                                     name="email" autoComplete="email"
                                     value={formik.values.email}
                                     onChange={formik.handleChange}
@@ -131,8 +139,11 @@ const Register = () => {
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
+                                <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                    Password *
+                                </Typography>
                                 <TextField
-                                    required fullWidth name="password" label="Password"
+                                    required fullWidth name="password" placeholder="Create a password"
                                     type="password" id="password" autoComplete="new-password"
                                     value={formik.values.password}
                                     onChange={formik.handleChange}
@@ -141,9 +152,12 @@ const Register = () => {
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
+                                <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                    Confirm Password *
+                                </Typography>
                                 <TextField
                                     required fullWidth name="confirmPassword"
-                                    label="Confirm Password" type="password" id="confirmPassword"
+                                    placeholder="Confirm your password" type="password" id="confirmPassword"
                                     value={formik.values.confirmPassword}
                                     onChange={formik.handleChange}
                                     error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
@@ -151,14 +165,19 @@ const Register = () => {
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
+                                <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                    Department *
+                                </Typography>
                                 <TextField
-                                    required fullWidth name="department" label="Department"
+                                    required fullWidth name="department" displayEmpty
                                     select id="department"
                                     value={formik.values.department}
                                     onChange={formik.handleChange}
                                     error={formik.touched.department && Boolean(formik.errors.department)}
                                     helperText={formik.touched.department && formik.errors.department}
+                                    sx={{ '& .MuiSelect-select': { color: formik.values.department ? '#ffffff' : 'rgba(255,255,255,0.4)' } }}
                                 >
+                                    <MenuItem value="" disabled>Select Department</MenuItem>
                                     <MenuItem value="CSE">Computer Science</MenuItem>
                                     <MenuItem value="ECE">Electronics</MenuItem>
                                     <MenuItem value="MECH">Mechanical</MenuItem>
@@ -169,14 +188,19 @@ const Register = () => {
                                 </TextField>
                             </Grid>
                             <Grid item xs={12} sm={6}>
+                                <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                    Year of Study *
+                                </Typography>
                                 <TextField
-                                    required fullWidth name="year" label="Year of Study"
+                                    required fullWidth name="year" displayEmpty
                                     select id="year"
                                     value={formik.values.year}
                                     onChange={formik.handleChange}
                                     error={formik.touched.year && Boolean(formik.errors.year)}
                                     helperText={formik.touched.year && formik.errors.year}
+                                    sx={{ '& .MuiSelect-select': { color: formik.values.year ? '#ffffff' : 'rgba(255,255,255,0.4)' } }}
                                 >
+                                    <MenuItem value="" disabled>Select Year</MenuItem>
                                     <MenuItem value="1">1st Year</MenuItem>
                                     <MenuItem value="2">2nd Year</MenuItem>
                                     <MenuItem value="3">3rd Year</MenuItem>
@@ -190,12 +214,12 @@ const Register = () => {
                             type="submit" fullWidth variant="contained" size="large"
                             sx={{
                                 mt: 3, mb: 2, py: 1.5,
-                                background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                                background: 'linear-gradient(135deg, #818cf8 0%, #c084fc 100%)',
                                 fontSize: '1rem', fontWeight: 600,
                                 '&:hover': {
-                                    background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+                                    background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
                                     transform: 'translateY(-1px)',
-                                    boxShadow: '0 8px 25px rgba(99, 102, 241, 0.3)'
+                                    boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4)'
                                 },
                                 transition: 'all 0.3s'
                             }}
@@ -204,19 +228,19 @@ const Register = () => {
                         </Button>
 
                         <Box textAlign="center">
-                            <Link to="/login" style={{ textDecoration: 'none', color: '#6366f1', fontWeight: 500 }}>
+                            <Link to="/login" style={{ textDecoration: 'none', color: '#a78bfa', fontWeight: 500 }}>
                                 Already have an account? Sign in
                             </Link>
                         </Box>
 
-                        <Divider sx={{ my: 2 }}>
-                            <Typography variant="body2" color="text.secondary">OR</Typography>
+                        <Divider sx={{ my: 2, borderColor: 'rgba(255,255,255,0.2)' }}>
+                            <Typography variant="body2" sx={{ color: '#9ca3af' }}>OR</Typography>
                         </Divider>
 
                         <Box textAlign="center">
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography variant="body2" sx={{ color: '#d1d5db' }}>
                                 Are you a counsellor?{' '}
-                                <Link to="/counsellor/register" style={{ textDecoration: 'none', color: '#ec4899', fontWeight: 600 }}>
+                                <Link to="/counsellor/register" style={{ textDecoration: 'none', color: '#f472b6', fontWeight: 600 }}>
                                     Register as Counsellor
                                 </Link>
                             </Typography>

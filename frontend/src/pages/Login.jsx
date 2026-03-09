@@ -123,36 +123,44 @@ const Login = () => {
 
                     <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{
                         position: 'relative', zIndex: 1,
-                        '& .MuiInputBase-input': { color: '#fff' },
+                        '& .MuiTextField-root': { mb: 2 },
+                        '& .MuiInputBase-input': { color: '#fff', '&::placeholder': { color: 'rgba(255,255,255,0.4)', opacity: 1 } },
                         '& .MuiOutlinedInput-root': {
+                            background: 'rgba(255, 255, 255, 0.05)',
                             '& fieldset': { borderColor: 'rgba(255,255,255,0.2)' },
                             '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.4)' },
                             '&.Mui-focused fieldset': { borderColor: '#a78bfa' },
                         },
-                        '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.5)' },
-                        '& .MuiInputLabel-root.Mui-focused': { color: '#a78bfa' },
                         '& .MuiFormHelperText-root': { color: 'rgba(255,255,255,0.4)' },
                     }}>
-                        <TextField
-                            margin="normal" required fullWidth
-                            id="email" label="University Email" name="email"
-                            autoComplete="email" autoFocus
-                            value={formik.values.email}
-                            onChange={formik.handleChange}
-                            error={formik.touched.email && Boolean(formik.errors.email)}
-                            helperText={formik.touched.email && formik.errors.email}
-                            className="animate-fadeInUp delay-1"
-                        />
-                        <TextField
-                            margin="normal" required fullWidth
-                            name="password" label="Password" type="password"
-                            id="password" autoComplete="current-password"
-                            value={formik.values.password}
-                            onChange={formik.handleChange}
-                            error={formik.touched.password && Boolean(formik.errors.password)}
-                            helperText={formik.touched.password && formik.errors.password}
-                            className="animate-fadeInUp delay-2"
-                        />
+                        <Box className="animate-fadeInUp delay-1" sx={{ mb: 2 }}>
+                            <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                University Email *
+                            </Typography>
+                            <TextField
+                                required fullWidth
+                                id="email" placeholder="example@university.edu" name="email"
+                                autoComplete="email" autoFocus
+                                value={formik.values.email}
+                                onChange={formik.handleChange}
+                                error={formik.touched.email && Boolean(formik.errors.email)}
+                                helperText={formik.touched.email && formik.errors.email}
+                            />
+                        </Box>
+                        <Box className="animate-fadeInUp delay-2" sx={{ mb: 2 }}>
+                            <Typography variant="subtitle2" sx={{ color: '#e5e7eb', mb: 0.5, textAlign: 'left' }}>
+                                Password *
+                            </Typography>
+                            <TextField
+                                required fullWidth
+                                name="password" placeholder="Enter your password" type="password"
+                                id="password" autoComplete="current-password"
+                                value={formik.values.password}
+                                onChange={formik.handleChange}
+                                error={formik.touched.password && Boolean(formik.errors.password)}
+                                helperText={formik.touched.password && formik.errors.password}
+                            />
+                        </Box>
                         <Button
                             type="submit" fullWidth variant="contained"
                             size="large"

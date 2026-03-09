@@ -116,10 +116,10 @@ const Appointments = () => {
                         {appointments.map((a, i) => {
                             const s = sConf[a.status] || sConf.pending;
                             return (
-                                <Grid item xs={12} md={6} key={a._id}>
-                                    <Card className="animate-fadeInUp" sx={{ animationDelay: `${i * 0.1}s`, borderLeft: `3px solid ${a.isEmergency ? '#ef4444' : s.color}`, position: 'relative', overflow: 'hidden' }}>
+                                <Grid item xs={12} md={6} key={a._id} sx={{ display: 'flex' }}>
+                                    <Card className="animate-fadeInUp" sx={{ animationDelay: `${i * 0.1}s`, borderLeft: `3px solid ${a.isEmergency ? '#ef4444' : s.color}`, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', width: '100%' }}>
                                         <Box sx={{ position: 'absolute', inset: 0, background: `linear-gradient(90deg, transparent, ${s.color}08, transparent)`, backgroundSize: '200% 100%', animation: 'shimmer 4s linear infinite', pointerEvents: 'none' }} />
-                                        <CardContent sx={{ p: 2.5, position: 'relative', zIndex: 1 }}>
+                                        <CardContent sx={{ p: 2.5, position: 'relative', zIndex: 1, flexGrow: 1 }}>
                                             {a.isEmergency && <Chip icon={<Warning sx={{ fontSize: 14 }} />} label="EMERGENCY" size="small" sx={{ bgcolor: 'rgba(239,68,68,0.15)', color: '#f87171', fontWeight: 700, mb: 1.5, fontSize: '0.65rem', border: '1px solid rgba(239,68,68,0.2)', animation: 'pulse 2s ease-in-out infinite' }} />}
                                             <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
                                                 <Box display="flex" alignItems="center" gap={1.5}>
@@ -145,7 +145,7 @@ const Appointments = () => {
                                                 </Typography>
                                             </Box>
                                         </CardContent>
-                                        <CardActions sx={{ px: 2.5, pb: 2, position: 'relative', zIndex: 1 }}>
+                                        <CardActions sx={{ px: 2.5, pb: 2, position: 'relative', zIndex: 1, mt: 'auto', display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'stretch' }}>
                                             {a.status === 'approved' && <Button variant="contained" color="success" startIcon={<VideoCall />} onClick={() => handleJoin(a.meetingId)} sx={{ borderRadius: 3, fontWeight: 600 }}>Join Video Call</Button>}
                                             {isC && a.status === 'pending' && <Button variant="contained" onClick={() => handleApprove(a._id)} sx={{ borderRadius: 3, fontWeight: 600 }}>Approve</Button>}
                                         </CardActions>

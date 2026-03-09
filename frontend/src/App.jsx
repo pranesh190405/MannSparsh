@@ -12,6 +12,7 @@ import CounsellorForum from './pages/CounsellorForum';
 import Chat from './pages/Chat';
 import Screening from './pages/Screening';
 import Appointments from './pages/Appointments';
+import Analytics from './pages/Analytics';
 import VideoRoom from './components/Video/VideoRoom';
 import Forum from './pages/Forum';
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/counsellor/dashboard" element={<CounsellorDashboard />} />
           <Route path="/counsellor/availability" element={<CounsellorAvailability />} />
           <Route path="/counsellor/forum" element={<CounsellorForum />} />
+          <Route path="/counsellor/analytics" element={<Analytics />} />
           <Route path="/screening" element={<Screening />} />
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/chat" element={<Chat />} />

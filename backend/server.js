@@ -74,6 +74,7 @@ app.use('/api/chat', require('./routes/chat'));
 app.use('/api/forum', require('./routes/forum'));
 app.use('/api/counsellor-availability', require('./routes/counsellorAvailability'));
 app.use('/api/counsellor-forum', require('./routes/counsellorForum'));
+app.use('/api/analytics', require('./routes/analytics'));
 
 const PORT = process.env.PORT || 5000;
 

@@ -36,7 +36,7 @@ const MainLayout = () => {
     ];
 
     const counsellorMenuItems = [
-        { text: 'Counsellor Hub', icon: <MedicalServices />, path: '/counsellor/dashboard', color: '#8b5cf6' },
+        { text: 'Analytics & Reports', icon: <Dashboard />, path: '/counsellor/analytics', color: '#ec4899' },
         { text: 'My Availability', icon: <CalendarMonth />, path: '/counsellor/availability', color: '#10b981' },
         { text: 'Appointments', icon: <VideoCall />, path: '/appointments', color: '#06b6d4' },
         { text: 'Pro Forum', icon: <Forum />, path: '/counsellor/forum', color: '#f59e0b' },

@@ -73,10 +73,14 @@ const VideoRoom = () => {
         // Handle incoming remote tracks
         pc.ontrack = (event) => {
             const [remoteStream] = event.streams;
-            if (remoteVideoRef.current) {
-                remoteVideoRef.current.srcObject = remoteStream;
-            }
-            setHasRemote(true);
+            setHasRemote(true); // Mount video element first
+
+            // Allow React cycle to mount the video element if it hasn't
+            setTimeout(() => {
+                if (remoteVideoRef.current) {
+                    remoteVideoRef.current.srcObject = remoteStream;
+                }
+            }, 50);
         };
 
         // Monitor connection state
@@ -145,7 +149,7 @@ const VideoRoom = () => {
 
             socketRef.current.emit('offer', {
                 target: targetUserId,
-                caller: user.id,
+                caller: user?._id || user?.id,
                 sdp: offer
             });
         } catch (err) {
@@ -179,7 +183,7 @@ const VideoRoom = () => {
 
             socketRef.current.emit('answer', {
                 target: payload.caller,
-                caller: user.id,
+                caller: user?._id || user?.id,
                 sdp: answer
             });
         } catch (err) {
@@ -251,7 +255,7 @@ const VideoRoom = () => {
             });
 
             // Join room AFTER everything is set up
-            socket.emit('join-room', roomId, user.id);
+            socket.emit('join-room', roomId, user?._id || user?.id);
         };
 
         init();
@@ -365,6 +369,9 @@ const VideoRoom = () => {
                         ref={remoteVideoRef}
                         autoPlay
                         playsInline
+                        onLoadedMetadata={(e) => {
+                            e.target.play().catch(err => console.error("Video play error:", err));
+                        }}
                         style={{
                             width: '100%', height: '100%', objectFit: 'contain',
                             background: '#0f0f0f'
