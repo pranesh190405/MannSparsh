@@ -15,6 +15,10 @@ import Appointments from './pages/Appointments';
 import Analytics from './pages/Analytics';
 import VideoRoom from './components/Video/VideoRoom';
 import Forum from './pages/Forum';
+import axios from 'axios';
+
+// Ensure all Axios requests map to the same Vercel domain the app is currently served from
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || window.location.origin;
 
 function App() {
   return (
