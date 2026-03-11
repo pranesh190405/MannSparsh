@@ -19,6 +19,7 @@ import axios from 'axios';
 
 // Ensure all Axios requests map to the same Vercel domain the app is currently served from
 axios.defaults.baseURL = import.meta.env.VITE_API_URL || window.location.origin;
+console.log("API URL: ", import.meta.env.VITE_API_URL);
 
 function App() {
   return (
