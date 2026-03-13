@@ -42,6 +42,7 @@ A comprehensive mental health support system for university students, featuring 
    cd backend
    npm install
    # Create .env file with:
+   # PORT=5000
    # MONGO_URI=mongodb+srv://praneshcollege1904_db_user:Aspirant190405@cluster0.59igkhl.mongodb.net/?appName=Cluster0
    # JWT_SECRET=your_secret
    # OPENAI_API_KEY=your_key
