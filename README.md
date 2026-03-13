@@ -2,6 +2,16 @@
 
 A comprehensive mental health support system for university students, featuring AI support, gamified screening, video counselling, and peer forums.
 
+# Collaborators : 
+- **Name**: M PRANESH
+- **Roll Number**: CB.SC.U4CSE23334
+
+- **Name**: Juturu Naga Abhinava Sai 
+- **Roll Number**: CB.SC.U4CSE23563 
+
+- **Name**: Bhuvanesh S
+- **Roll Number**: CB.SC.U4CSE23544
+
 ## Features
 
 - **Gamified Screening**: Story-based PHQ-9 & GAD-7 assessments.
@@ -32,7 +42,7 @@ A comprehensive mental health support system for university students, featuring 
    cd backend
    npm install
    # Create .env file with:
-   # MONGO_URI=mongodb://localhost:27017/campuscare
+   # MONGO_URI=mongodb+srv://praneshcollege1904_db_user:Aspirant190405@cluster0.59igkhl.mongodb.net/?appName=Cluster0
    # JWT_SECRET=your_secret
    # OPENAI_API_KEY=your_key
    npm start
@@ -45,13 +55,17 @@ A comprehensive mental health support system for university students, featuring 
    npm run dev
    ```
 
-4. **Access the App**
-   - Frontend: `http://localhost:5173`
-   - Backend: `http://localhost:5000`
+## Live Deployments & Demo
+
+- **Frontend (Vercel)**: [https://mann-sparsh.vercel.app/login](https://mann-sparsh.vercel.app/login)
+- **Backend API (Render)**: [https://mannsparsh.onrender.com](https://mannsparsh.onrender.com)
+- **Video Demonstration**: [YouTube Link - Watch Here](https://youtu.be/j5i7TVRZlW8)
 
 ### Default Roles (Create via Register Page)
-- **Student**: Default role on sign up.
+- **Student**: Default role on sign up
+  -- alice@test.com , password : password123
 - **Counsellor/Admin**: Update role manually in MongoDB or use seed script (not included).
+  -- counsellor@test.com , password : password123
 
 ## Architecture Notes
 - The **Local Action Agent** runs on the backend to execute safe actions (booking, flagging) triggered by the AI's analysis.
