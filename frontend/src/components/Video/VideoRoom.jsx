@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Box, Typography, IconButton, Avatar, Chip, Fade } from '@mui/material';
 import {
     Mic, MicOff, Videocam, VideocamOff, CallEnd,
@@ -24,229 +24,209 @@ const VideoRoom = () => {
     const [micOn, setMicOn] = useState(true);
     const [camOn, setCamOn] = useState(true);
     const [connectionState, setConnectionState] = useState('connecting');
-    const [remoteCamOff, setRemoteCamOff] = useState(false);
-    const [mediaError, setMediaError] = useState(null);
     const [hasRemote, setHasRemote] = useState(false);
+    const [mediaError, setMediaError] = useState(null);
 
     const localVideoRef = useRef(null);
     const remoteVideoRef = useRef(null);
     const peerConnectionRef = useRef(null);
     const socketRef = useRef(null);
     const localStreamRef = useRef(null);
-    const iceCandidateBuffer = useRef([]);
-    const isNegotiating = useRef(false);
 
-    // Get local media stream
-    const getLocalStream = useCallback(async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: true,
-                audio: true
-            });
+    // Keep user in a ref so the effect always has the latest value
+    const userRef = useRef(user);
+    useEffect(() => { userRef.current = user; }, [user]);
+
+    // =============================================
+    // Main initialization — ALL WebRTC logic inline
+    // to avoid stale closure problems
+    // =============================================
+    useEffect(() => {
+        let mounted = true;
+        const iceCandidateBuffer = [];
+
+        const init = async () => {
+            // --- 1. Get local media stream ---
+            let stream;
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            } catch (err) {
+                console.error('Failed to get media:', err);
+                if (err.name === 'NotAllowedError') {
+                    setMediaError('Camera/microphone access was denied. Please allow access and refresh.');
+                } else if (err.name === 'NotFoundError') {
+                    setMediaError('No camera or microphone found on this device.');
+                } else {
+                    setMediaError('Could not access camera/microphone. Please check your device settings.');
+                }
+                return;
+            }
+            if (!mounted) { stream.getTracks().forEach(t => t.stop()); return; }
+
             localStreamRef.current = stream;
             if (localVideoRef.current) {
                 localVideoRef.current.srcObject = stream;
             }
-            return stream;
-        } catch (err) {
-            console.error('Failed to get media:', err);
-            if (err.name === 'NotAllowedError') {
-                setMediaError('Camera/microphone access was denied. Please allow access and refresh.');
-            } else if (err.name === 'NotFoundError') {
-                setMediaError('No camera or microphone found on this device.');
-            } else {
-                setMediaError('Could not access camera/microphone. Please check your device settings.');
-            }
-            return null;
-        }
-    }, []);
 
-    // Create and configure peer connection
-    const createPeerConnection = useCallback((stream) => {
-        const pc = new RTCPeerConnection(ICE_SERVERS);
+            // --- 2. Create peer connection ---
+            const pc = new RTCPeerConnection(ICE_SERVERS);
+            peerConnectionRef.current = pc;
 
-        // Add local tracks
-        stream.getTracks().forEach(track => {
-            pc.addTrack(track, stream);
-        });
+            // Add local tracks to peer connection
+            stream.getTracks().forEach(track => {
+                pc.addTrack(track, stream);
+            });
 
-        // Handle incoming remote tracks
-        pc.ontrack = (event) => {
-            const [remoteStream] = event.streams;
-            setHasRemote(true); // Mount video element first
+            // Handle incoming remote tracks
+            pc.ontrack = (event) => {
+                console.log('[WebRTC] Remote track received');
+                const [remoteStream] = event.streams;
+                setHasRemote(true);
+                // Allow React to mount the video element
+                setTimeout(() => {
+                    if (remoteVideoRef.current) {
+                        remoteVideoRef.current.srcObject = remoteStream;
+                    }
+                }, 100);
+            };
 
-            // Allow React cycle to mount the video element if it hasn't
-            setTimeout(() => {
-                if (remoteVideoRef.current) {
-                    remoteVideoRef.current.srcObject = remoteStream;
-                }
-            }, 50);
-        };
-
-        // Monitor connection state
-        pc.oniceconnectionstatechange = () => {
-            const state = pc.iceConnectionState;
-            console.log('ICE state:', state);
-            switch (state) {
-                case 'checking':
-                    setConnectionState('connecting');
-                    break;
-                case 'connected':
-                case 'completed':
-                    setConnectionState('connected');
-                    break;
-                case 'disconnected':
-                    setConnectionState('reconnecting');
-                    break;
-                case 'failed':
-                    setConnectionState('failed');
-                    break;
-                case 'closed':
-                    setConnectionState('disconnected');
-                    break;
-                default:
-                    break;
-            }
-        };
-
-        peerConnectionRef.current = pc;
-        return pc;
-    }, []);
-
-    // Drain any buffered ICE candidates
-    const drainIceCandidates = useCallback(async () => {
-        const pc = peerConnectionRef.current;
-        if (!pc || !pc.remoteDescription) return;
-        for (const candidate of iceCandidateBuffer.current) {
-            try {
-                await pc.addIceCandidate(new RTCIceCandidate(candidate));
-            } catch (e) {
-                console.error('Error adding buffered ICE candidate:', e);
-            }
-        }
-        iceCandidateBuffer.current = [];
-    }, []);
-
-    // Create offer (called when we are the first peer and someone joins)
-    const createOffer = useCallback(async (targetUserId) => {
-        const pc = peerConnectionRef.current;
-        if (!pc || isNegotiating.current) return;
-        isNegotiating.current = true;
-
-        try {
-            // Set ICE candidate handler for this target
-            pc.onicecandidate = (event) => {
-                if (event.candidate && socketRef.current) {
-                    socketRef.current.emit('ice-candidate', {
-                        target: targetUserId,
-                        candidate: event.candidate
-                    });
+            // Monitor ICE connection state
+            pc.oniceconnectionstatechange = () => {
+                const state = pc.iceConnectionState;
+                console.log('[WebRTC] ICE state:', state);
+                switch (state) {
+                    case 'checking':
+                        setConnectionState('connecting');
+                        break;
+                    case 'connected':
+                    case 'completed':
+                        setConnectionState('connected');
+                        break;
+                    case 'disconnected':
+                        setConnectionState('reconnecting');
+                        break;
+                    case 'failed':
+                        setConnectionState('failed');
+                        break;
+                    case 'closed':
+                        setConnectionState('disconnected');
+                        break;
+                    default:
+                        break;
                 }
             };
 
-            const offer = await pc.createOffer();
-            await pc.setLocalDescription(offer);
-
-            socketRef.current.emit('offer', {
-                target: targetUserId,
-                caller: user?._id || user?.id,
-                sdp: offer
-            });
-        } catch (err) {
-            console.error('Error creating offer:', err);
-        } finally {
-            isNegotiating.current = false;
-        }
-    }, [user]);
-
-    // Handle incoming offer
-    const handleOffer = useCallback(async (payload) => {
-        const pc = peerConnectionRef.current;
-        if (!pc) return;
-
-        try {
-            // Set ICE candidate handler for this caller
-            pc.onicecandidate = (event) => {
-                if (event.candidate && socketRef.current) {
-                    socketRef.current.emit('ice-candidate', {
-                        target: payload.caller,
-                        candidate: event.candidate
-                    });
+            // --- Helper: drain buffered ICE candidates ---
+            const drainIceCandidates = async () => {
+                if (!pc.remoteDescription) return;
+                while (iceCandidateBuffer.length > 0) {
+                    const candidate = iceCandidateBuffer.shift();
+                    try {
+                        await pc.addIceCandidate(new RTCIceCandidate(candidate));
+                    } catch (e) {
+                        console.error('[WebRTC] Error adding buffered ICE candidate:', e);
+                    }
                 }
             };
 
-            await pc.setRemoteDescription(new RTCSessionDescription(payload.sdp));
-            await drainIceCandidates();
-
-            const answer = await pc.createAnswer();
-            await pc.setLocalDescription(answer);
-
-            socketRef.current.emit('answer', {
-                target: payload.caller,
-                caller: user?._id || user?.id,
-                sdp: answer
-            });
-        } catch (err) {
-            console.error('Error handling offer:', err);
-        }
-    }, [user, drainIceCandidates]);
-
-    // Handle incoming answer
-    const handleAnswer = useCallback(async (payload) => {
-        const pc = peerConnectionRef.current;
-        if (!pc) return;
-        try {
-            await pc.setRemoteDescription(new RTCSessionDescription(payload.sdp));
-            await drainIceCandidates();
-        } catch (err) {
-            console.error('Error handling answer:', err);
-        }
-    }, [drainIceCandidates]);
-
-    // Handle incoming ICE candidate
-    const handleIceCandidate = useCallback(async (candidate) => {
-        const pc = peerConnectionRef.current;
-        if (!pc) return;
-
-        // Buffer if remote description not set yet
-        if (!pc.remoteDescription) {
-            iceCandidateBuffer.current.push(candidate);
-            return;
-        }
-
-        try {
-            await pc.addIceCandidate(new RTCIceCandidate(candidate));
-        } catch (e) {
-            console.error('Error adding ICE candidate:', e);
-        }
-    }, []);
-
-    // Main initialization
-    useEffect(() => {
-        let mounted = true;
-
-        const init = async () => {
-            // 1. Get local stream FIRST
-            const stream = await getLocalStream();
-            if (!stream || !mounted) return;
-
-            // 2. Create peer connection with the stream
-            createPeerConnection(stream);
-
-            // 3. THEN connect socket and join room
-            const socket = io('/', { path: '/socket.io' });
+            // --- 3. Connect socket ---
+            const socketUrl = import.meta.env.VITE_API_URL || window.location.origin;
+            console.log('[WebRTC] Connecting socket to:', socketUrl);
+            const socket = io(socketUrl, { path: '/socket.io' });
             socketRef.current = socket;
 
-            socket.on('user-connected', (userId) => {
-                console.log('Remote user joined:', userId);
-                createOffer(userId);
+            const userId = userRef.current?._id || userRef.current?.id;
+            console.log('[WebRTC] My userId:', userId, 'Room:', roomId);
+
+            // --- When another user joins the room, WE create the offer ---
+            socket.on('user-connected', async (remoteUserId) => {
+                console.log('[WebRTC] Remote user joined:', remoteUserId, '— creating offer');
+
+                // Set ICE candidate handler targeting the remote user
+                pc.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        console.log('[WebRTC] Sending ICE candidate to:', remoteUserId);
+                        socket.emit('ice-candidate', {
+                            target: remoteUserId,
+                            candidate: event.candidate
+                        });
+                    }
+                };
+
+                try {
+                    const offer = await pc.createOffer();
+                    await pc.setLocalDescription(offer);
+                    console.log('[WebRTC] Offer created and sent to:', remoteUserId);
+                    socket.emit('offer', {
+                        target: remoteUserId,
+                        caller: userId,
+                        sdp: offer
+                    });
+                } catch (err) {
+                    console.error('[WebRTC] Error creating offer:', err);
+                }
             });
 
-            socket.on('offer', handleOffer);
-            socket.on('answer', handleAnswer);
-            socket.on('ice-candidate', handleIceCandidate);
+            // --- Handle incoming offer ---
+            socket.on('offer', async (payload) => {
+                console.log('[WebRTC] Offer received from:', payload.caller);
 
+                // Set ICE candidate handler targeting the caller
+                pc.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        console.log('[WebRTC] Sending ICE candidate to:', payload.caller);
+                        socket.emit('ice-candidate', {
+                            target: payload.caller,
+                            candidate: event.candidate
+                        });
+                    }
+                };
+
+                try {
+                    await pc.setRemoteDescription(new RTCSessionDescription(payload.sdp));
+                    await drainIceCandidates();
+
+                    const answer = await pc.createAnswer();
+                    await pc.setLocalDescription(answer);
+                    console.log('[WebRTC] Answer created and sent to:', payload.caller);
+                    socket.emit('answer', {
+                        target: payload.caller,
+                        caller: userId,
+                        sdp: answer
+                    });
+                } catch (err) {
+                    console.error('[WebRTC] Error handling offer:', err);
+                }
+            });
+
+            // --- Handle incoming answer ---
+            socket.on('answer', async (payload) => {
+                console.log('[WebRTC] Answer received from:', payload.caller);
+                try {
+                    await pc.setRemoteDescription(new RTCSessionDescription(payload.sdp));
+                    await drainIceCandidates();
+                } catch (err) {
+                    console.error('[WebRTC] Error handling answer:', err);
+                }
+            });
+
+            // --- Handle incoming ICE candidate ---
+            socket.on('ice-candidate', async (candidate) => {
+                console.log('[WebRTC] ICE candidate received');
+                if (!pc.remoteDescription) {
+                    iceCandidateBuffer.push(candidate);
+                    return;
+                }
+                try {
+                    await pc.addIceCandidate(new RTCIceCandidate(candidate));
+                } catch (e) {
+                    console.error('[WebRTC] Error adding ICE candidate:', e);
+                }
+            });
+
+            // --- Handle remote user disconnect ---
             socket.on('user-disconnected', () => {
+                console.log('[WebRTC] Remote user disconnected');
                 setHasRemote(false);
                 setConnectionState('disconnected');
                 if (remoteVideoRef.current) {
@@ -254,15 +234,16 @@ const VideoRoom = () => {
                 }
             });
 
-            // Join room AFTER everything is set up
-            socket.emit('join-room', roomId, user?._id || user?.id);
+            // --- 4. Join the room AFTER everything is set up ---
+            console.log('[WebRTC] Joining room:', roomId, 'as user:', userId);
+            socket.emit('join-room', roomId, userId);
         };
 
         init();
 
+        // --- Cleanup ---
         return () => {
             mounted = false;
-            // Cleanup
             if (socketRef.current) {
                 socketRef.current.disconnect();
                 socketRef.current = null;
