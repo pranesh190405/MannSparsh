@@ -1,73 +1,70 @@
-# MANNSPARSH - Digital Mental Health Platform
+# MannSparsh
 
-A comprehensive mental health support system for university students, featuring AI support, gamified screening, video counselling, and peer forums.
+Welcome to the repository for MannSparsh. This project is a comprehensive full-stack web application designed to provide student support and counseling services. 
 
-# Collaborators : 
-- **Name**: M PRANESH
-- **Roll Number**: CB.SC.U4CSE23334
+## Live Demo and Deployment
 
-- **Name**: Juturu Naga Abhinava Sai 
-- **Roll Number**: CB.SC.U4CSE23563 
+You can test out the live version of the application using the links below:
 
-- **Name**: Bhuvanesh S
-- **Roll Number**: CB.SC.U4CSE23544
+### Important Note for Testing
+Since the backend is hosted on a free instance, it may take a moment to start up after a period of inactivity. 
+1. First, click on the **Backend Link** to wake up the server. Please wait for about a minute for it to fully start.
+2. Once the backend is active, you can proceed to the **Frontend Link** to use the application.
 
-## Features
+- **Backend (Render):** https://mannsparsh.onrender.com
+- **Frontend (Vercel):** https://mann-sparsh.vercel.app
 
-- **Gamified Screening**: Story-based PHQ-9 & GAD-7 assessments.
-- **AI Companion**: Empathetic chatbot using OpenAI API (System Prompt engineered for safety).
-- **Video Counselling**: WebRTC-based video sessions with university counsellors.
-- **Peer Forum**: Anonymous actionable support community.
-- **Admin Dashboard**: Analytics on mental health trends.
-- **Security**: JWT Authentication, Role-based access (Student, Counsellor, Admin).
+## Product Demo
 
-## Tech Stack
+Watch the product demonstration video on YouTube:
+https://youtu.be/j5i7TVRZlW8
 
-- **Frontend**: React, Vite, Material UI, Socket.io Client
-- **Backend**: Node.js, Express, MongoDB, Socket.io, WebRTC
-- **AI**: OpenAI API + Local Action Agent
+## Demo Credentials
 
-## Usage Instructions
+You can use the following credentials to explore different roles within the application:
 
-### Prerequisites
-- Node.js (v14+)
-- MongoDB (Running locally or Atlas URI)
+**Student Account:**
+- Email: alice@test.com
+- Password: password123
 
-### Setup
+**Counsellor Account:**
+- Email: counsellor@test.com
+- Password: password123
 
-1. **Clone/Download** the repository.
+## How to Run Locally
 
-2. **Backend Setup**
-   ```bash
-   cd backend
-   npm install
-   # Create .env file with:
-   # PORT=5000
-   # MONGO_URI=mongodb+srv://praneshcollege1904_db_user:Aspirant190405@cluster0.59igkhl.mongodb.net/?appName=Cluster0
-   # JWT_SECRET=your_secret
-   # OPENAI_API_KEY=your_key
-   npm start
-   ```
+If you wish to run the application on your local machine, please follow these steps:
 
-3. **Frontend Setup**
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
+1. Clone the repository:
+   https://github.com/pranesh190405/MannSparsh/tree/master
 
-## Live Deployments & Demo
+2. Open your terminal and navigate to the project directory.
 
-- **Frontend (Vercel)**: [https://mann-sparsh.vercel.app/login](https://mann-sparsh.vercel.app/login)
-- **Backend API (Render)**: [https://mannsparsh.onrender.com](https://mannsparsh.onrender.com)
-- **Video Demonstration**: [YouTube Link - Watch Here](https://youtu.be/j5i7TVRZlW8)
+3. Install the dependencies for the backend:
+   Navigate to the `backend` folder and run:
+   > npm install
 
-### Default Roles (Create via Register Page)
-- **Student**: Default role on sign up
-  -- alice@test.com , password : password123
-- **Counsellor/Admin**: Update role manually in MongoDB or use seed script (not included).
-  -- counsellor@test.com , password : password123
+4. Install the dependencies for the frontend:
+   Open a new terminal, navigate to the `frontend` folder, and run:
+   > npm install
 
-## Architecture Notes
-- The **Local Action Agent** runs on the backend to execute safe actions (booking, flagging) triggered by the AI's analysis.
-- **WebRTC** uses a simple mesh network via Socket.io signaling.
+5. Start the backend and frontend servers in their respective folders using the start commands defined in your project.
+
+## Collaborators
+
+This project was built by a team of full-stack developers:
+
+- **Pranesh** 
+  Roll No: CB.SC.U4CSE23334 
+  Role: Full Stack Developer
+
+- **Juturu Naga Abhinav Sai** 
+  Roll No: CB.SC.U4CSE23563 
+  Role: Full Stack Developer
+
+- **Bhuvanesh S** 
+  Roll No: CB.SC.U4CSE23544 
+  Role: Full Stack Developer
+
+---
+GitHub Repository: https://github.com/pranesh190405/MannSparsh/tree/master
